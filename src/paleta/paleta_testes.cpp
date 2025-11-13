@@ -51,10 +51,10 @@ TEST_CASE("Testa a criação de uma paleta a partir de um arquivo válido") {
     CHECK(paleta.obterCor(29).g == 255);
     CHECK(paleta.obterCor(29).b == 255);
 }
-/*
+
 TEST_CASE("Testa a criação de uma paleta a partir de um arquivo inexistente") {
     Paleta paleta("arquivo_inexistente.txt");
 
     // a paleta deve estar vazia
     CHECK(paleta.obterTamanho() == 0);
-}*/
+}
