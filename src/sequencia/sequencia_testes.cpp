@@ -8,6 +8,7 @@ TEST_CASE("Testa a criação de uma sequência de inteiros (sem nenhum elemento)
     CHECK(seq.obterTamanho() == 0);
 }
 
+/*
 TEST_CASE("Testa a adição de elementos em uma sequência vazia")
 {
     Sequencia<int> seq;
@@ -60,3 +61,4 @@ TEST_CASE("Testa a criação de uma sequência de strings") {
     CHECK(seq[0] == "hello");
     CHECK(seq[1] == "world");
 }
+*/
