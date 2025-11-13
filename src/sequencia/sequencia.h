@@ -4,6 +4,8 @@ class Sequencia{
     int quantidade;
     T *dados;
 
+    //criar funçao que aumenta tamanho
+
 public:
     //inicialização
     Sequencia (int cap = 2):capacidade(cap), quantidade(0){
@@ -17,5 +19,13 @@ public:
 
      int obterTamanho(){
         return quantidade;
+     }
+
+     void adicionarElemento(T n){
+        if (quantidade >= capacidade){
+            //chamar a funçao que aumenta tamanho
+        }
+        dados[quantidade] = n;
+        quantidade++;
      }
 };
