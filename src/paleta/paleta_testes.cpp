@@ -32,17 +32,17 @@ TEST_CASE("Testa a obtenção de uma cor com índice inválido") {
 TEST_CASE("Testa a criação de uma paleta a partir de um arquivo válido") {
     // o arquivo "cores.hex" foi fornecido junto com o projeto.
     // verifique se ele se encontra na mesma pasta que o executável do teste.
-    Paleta paleta("cores.hex");
+    Paleta paleta("cores_n.hex");
 
     // verifica se as cores foram carregadas corretamente
     CHECK(paleta.obterTamanho() == 30);
-    CHECK(paleta.obterCor(0).r == 113);
-    CHECK(paleta.obterCor(0).g == 171);
-    CHECK(paleta.obterCor(0).b == 216);
+    CHECK(paleta.obterCor(0).r == 0);
+    CHECK(paleta.obterCor(0).g == 0);
+    CHECK(paleta.obterCor(0).b == 255);
 
-    CHECK(paleta.obterCor(1).r == 121);
-    CHECK(paleta.obterCor(1).g == 178);
-    CHECK(paleta.obterCor(1).b == 222);
+    CHECK(paleta.obterCor(1).r == 0);
+    CHECK(paleta.obterCor(1).g == 81);
+    CHECK(paleta.obterCor(1).b == 255);
     
     //... outras cores
 
@@ -51,11 +51,9 @@ TEST_CASE("Testa a criação de uma paleta a partir de um arquivo válido") {
     CHECK(paleta.obterCor(29).b == 255);
 }
 
-/*
 TEST_CASE("Testa a criação de uma paleta a partir de um arquivo inexistente") {
     Paleta paleta("arquivo_inexistente.txt");
 
     // a paleta deve estar vazia
     CHECK(paleta.obterTamanho() == 0);
 }
-*/
