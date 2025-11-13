@@ -5,6 +5,17 @@ class Sequencia{
     T *dados;
 
     //criar funçao que aumenta tamanho
+    void aumentarCapacidade()
+    {
+        capacidade *= 2;
+        T *novo = new T[capacidade];
+        for (int i = 0; i < tamanho; i++)
+        {
+            novo[i] = dados[i];
+        }
+        delete[] dados;
+        dados = novo;
+    }
 
 public:
     //inicialização
