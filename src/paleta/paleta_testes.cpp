@@ -29,7 +29,7 @@ TEST_CASE("Testa a obtenção de uma cor com índice inválido") {
     CHECK(corInvalida.g == 0);
     CHECK(corInvalida.b == 0);
 }
-/*
+
 TEST_CASE("Testa a criação de uma paleta a partir de um arquivo válido") {
     // o arquivo "cores.hex" foi fornecido junto com o projeto.
     // verifique se ele se encontra na mesma pasta que o executável do teste.
@@ -51,7 +51,7 @@ TEST_CASE("Testa a criação de uma paleta a partir de um arquivo válido") {
     CHECK(paleta.obterCor(29).g == 255);
     CHECK(paleta.obterCor(29).b == 255);
 }
-
+/*
 TEST_CASE("Testa a criação de uma paleta a partir de um arquivo inexistente") {
     Paleta paleta("arquivo_inexistente.txt");
 
