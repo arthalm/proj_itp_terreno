@@ -9,7 +9,7 @@ class Sequencia{
     {
         capacidade *= 2;
         T *novo = new T[capacidade];
-        for (int i = 0; i < tamanho; i++)
+        for (int i = 0; i < quantidade; i++)
         {
             novo[i] = dados[i];
         }
