@@ -1437,7 +1437,7 @@ namespace doctest
 
     template<class T> struct can_use_op : public not_char_pointer<typename decay_array<T>::type> {};
 #endif // DOCTEST_CONFIG_TREAT_CHAR_STAR_AS_STRING
-        // clang-format on
+       // clang-format on
 
         struct DOCTEST_INTERFACE TestFailureException
         {
@@ -1567,7 +1567,7 @@ namespace doctest
         DOCTEST_MSVC_SUPPRESS_WARNING(4388) // signed/unsigned mismatch
         DOCTEST_MSVC_SUPPRESS_WARNING(4389) // 'operator' : signed/unsigned mismatch
         DOCTEST_MSVC_SUPPRESS_WARNING(4018) // 'expression' : signed/unsigned mismatch
-        // DOCTEST_MSVC_SUPPRESS_WARNING(4805) // 'operation' : unsafe mix of type 'type' and type 'type' in operation
+                                            // DOCTEST_MSVC_SUPPRESS_WARNING(4805) // 'operation' : unsafe mix of type 'type' and type 'type' in operation
 
 #endif // DOCTEST_CONFIG_NO_COMPARISON_WARNING_SUPPRESSION
 
@@ -1583,7 +1583,7 @@ namespace doctest
     inline bool le(const char* lhs, const char* rhs) { return String(lhs) <= String(rhs); }
     inline bool ge(const char* lhs, const char* rhs) { return String(lhs) >= String(rhs); }
 #endif // DOCTEST_CONFIG_TREAT_CHAR_STAR_AS_STRING
-        // clang-format on
+       // clang-format on
 
 #define DOCTEST_RELATIONAL_OP(name, op)                                \
     template <typename L, typename R>                                  \
@@ -1960,7 +1960,7 @@ namespace doctest
                 }
                 catch (...)
                 {
-                }                       //! OCLINT -  empty catch statement
+                } //! OCLINT -  empty catch statement
 #endif                                  // DOCTEST_CONFIG_NO_EXCEPTIONS
                 static_cast<void>(res); // to silence -Wunused-parameter
                 return false;
@@ -3663,16 +3663,16 @@ namespace doctest
         template <typename T>
         using MultiLaneAtomic = Atomic<T>;
 #else  // DOCTEST_CONFIG_NO_MULTI_LANE_ATOMICS
-        // Provides a multilane implementation of an atomic variable that supports add, sub, load,
-        // store. Instead of using a single atomic variable, this splits up into multiple ones,
-        // each sitting on a separate cache line. The goal is to provide a speedup when most
-        // operations are modifying. It achieves this with two properties:
-        //
-        // * Multiple atomics are used, so chance of congestion from the same atomic is reduced.
-        // * Each atomic sits on a separate cache line, so false sharing is reduced.
-        //
-        // The disadvantage is that there is a small overhead due to the use of TLS, and load/store
-        // is slower because all atomics have to be accessed.
+       // Provides a multilane implementation of an atomic variable that supports add, sub, load,
+       // store. Instead of using a single atomic variable, this splits up into multiple ones,
+       // each sitting on a separate cache line. The goal is to provide a speedup when most
+       // operations are modifying. It achieves this with two properties:
+       //
+       // * Multiple atomics are used, so chance of congestion from the same atomic is reduced.
+       // * Each atomic sits on a separate cache line, so false sharing is reduced.
+       //
+       // The disadvantage is that there is a small overhead due to the use of TLS, and load/store
+       // is slower because all atomics have to be accessed.
         template <typename T>
         class MultiLaneAtomic
         {
@@ -7683,7 +7683,7 @@ namespace {
                     try
                     {
 #endif // DOCTEST_CONFIG_NO_EXCEPTIONS
-                        // MSVC 2015 diagnoses fatalConditionHandler as unused (because reset() is a static method)
+       // MSVC 2015 diagnoses fatalConditionHandler as unused (because reset() is a static method)
                         DOCTEST_MSVC_SUPPRESS_WARNING_WITH_PUSH(4101) // unreferenced local variable
                         FatalConditionHandler fatalConditionHandler;  // Handle signals
                         // execute the test
