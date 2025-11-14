@@ -8,7 +8,6 @@ TEST_CASE("Testa a criação de uma sequência de inteiros (sem nenhum elemento)
     CHECK(seq.obterTamanho() == 0);
 }
 
-/*
 TEST_CASE("Testa a adição de elementos em uma sequência vazia")
 {
     Sequencia<int> seq;
@@ -41,7 +40,8 @@ TEST_CASE("Testa o redimensionamento da sequência")
     CHECK(seq[99] == 99);
 }
 
-TEST_CASE("Testa a alteração de elementos via operador[]") {
+TEST_CASE("Testa a alteração de elementos via operador[]")
+{
     Sequencia<int> seq;
     seq.adicionar(10);
     seq.adicionar(20);
@@ -52,7 +52,8 @@ TEST_CASE("Testa a alteração de elementos via operador[]") {
     CHECK(seq[1] == 30);
 }
 
-TEST_CASE("Testa a criação de uma sequência de strings") {
+TEST_CASE("Testa a criação de uma sequência de strings")
+{
     Sequencia<std::string> seq;
     seq.adicionar("hello");
     seq.adicionar("world");
@@ -61,4 +62,3 @@ TEST_CASE("Testa a criação de uma sequência de strings") {
     CHECK(seq[0] == "hello");
     CHECK(seq[1] == "world");
 }
-*/
