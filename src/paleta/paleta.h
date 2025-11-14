@@ -15,7 +15,7 @@ class Paleta
 
     void aumentarCapacidade()
     {
-        capacidade *= 2;
+        capacidade += 1;
         Cor *novo = new Cor[capacidade];
         for (int i = 0; i < tamanho; i++)
         {
@@ -26,12 +26,12 @@ class Paleta
     }
 
 public:
-    Paleta(int cap = 2) : capacidade(cap), tamanho(0)
+    Paleta(int cap = 0) : capacidade(cap), tamanho(0)
     {
         cores = new Cor[capacidade];
     }
 
-    Paleta(std::string arquivo) : capacidade(2), tamanho(0)
+    Paleta(std::string arquivo) : capacidade(0), tamanho(0)
     {
         cores = new Cor[capacidade];
         std::ifstream file(arquivo);
@@ -46,13 +46,13 @@ public:
             {
                 linha.erase(0, 1);
             }
-            std::string Ri = linha.substr(0, 2);
-            std::string Gi = linha.substr(2, 2);
-            std::string Bi = linha.substr(4, 2);
+            std::string Re = linha.substr(0, 2);
+            std::string Gr = linha.substr(2, 2);
+            std::string Bl = linha.substr(4, 2);
 
-            unsigned char R = std::stoi(Ri, 0, 16);
-            unsigned char G = std::stoi(Gi, 0, 16);
-            unsigned char B = std::stoi(Bi, 0, 16);
+            unsigned char R = std::stoi(Re, 0, 16);
+            unsigned char G = std::stoi(Gr, 0, 16);
+            unsigned char B = std::stoi(Bl, 0, 16);
 
             if (tamanho >= capacidade)
             {
