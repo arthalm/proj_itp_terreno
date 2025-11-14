@@ -2,14 +2,16 @@
 #include "../doctest.h"
 #include "paleta.h"
 
-TEST_CASE("Testa a criação de uma paleta padrão (sem nenhuma cor)") {
+TEST_CASE("Testa a criação de uma paleta padrão (sem nenhuma cor)")
+{
     Paleta paleta;
     CHECK(paleta.obterTamanho() == 0);
 }
 
-TEST_CASE("Testa a adição de cores uma paleta vazia") {
+TEST_CASE("Testa a adição de cores uma paleta vazia")
+{
     Paleta paleta;
-    paleta.adicionarCor(Cor {255, 0, 0});
+    paleta.adicionarCor(Cor{255, 0, 0});
 
     CHECK(paleta.obterTamanho() == 1);
     CHECK(paleta.obterCor(0).r == 255);
@@ -17,9 +19,10 @@ TEST_CASE("Testa a adição de cores uma paleta vazia") {
     CHECK(paleta.obterCor(0).b == 0);
 }
 
-TEST_CASE("Testa a obtenção de uma cor com índice inválido") {
+TEST_CASE("Testa a obtenção de uma cor com índice inválido")
+{
     Paleta paleta;
-    paleta.adicionarCor(Cor {100, 150, 200});
+    paleta.adicionarCor(Cor{100, 150, 200});
 
     Cor corInvalida = paleta.obterCor(5); // índice inválido (maior que o tamanho)
 
@@ -29,7 +32,8 @@ TEST_CASE("Testa a obtenção de uma cor com índice inválido") {
     CHECK(corInvalida.b == 0);
 }
 
-TEST_CASE("Testa a criação de uma paleta a partir de um arquivo válido") {
+TEST_CASE("Testa a criação de uma paleta a partir de um arquivo válido")
+{
     // o arquivo "cores.hex" foi fornecido junto com o projeto.
     // verifique se ele se encontra na mesma pasta que o executável do teste.
     Paleta paleta("cores_n.hex");
@@ -43,7 +47,7 @@ TEST_CASE("Testa a criação de uma paleta a partir de um arquivo válido") {
     CHECK(paleta.obterCor(1).r == 0);
     CHECK(paleta.obterCor(1).g == 81);
     CHECK(paleta.obterCor(1).b == 255);
-    
+
     //... outras cores
 
     CHECK(paleta.obterCor(29).r == 255);
@@ -51,7 +55,8 @@ TEST_CASE("Testa a criação de uma paleta a partir de um arquivo válido") {
     CHECK(paleta.obterCor(29).b == 255);
 }
 
-TEST_CASE("Testa a criação de uma paleta a partir de um arquivo inexistente") {
+TEST_CASE("Testa a criação de uma paleta a partir de um arquivo inexistente")
+{
     Paleta paleta("arquivo_inexistente.txt");
 
     // a paleta deve estar vazia

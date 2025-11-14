@@ -7,7 +7,7 @@ class Sequencia
     int tamanho;
     S *dados;
 
-    //função que dobra a capacidade de alocação da memória e deleta a sequência antiga
+    // função que dobra a capacidade de alocação da memória e deleta a sequência antiga
     void aumentarCapacidade()
     {
         capacidade *= 2;
@@ -21,25 +21,25 @@ class Sequencia
     }
 
 public:
-    //método que inicializa uma sequência de capacidade 2 e tamanho 0;
+    // método que inicializa uma sequência de capacidade 2 e tamanho 0;
     Sequencia(int cap = 2) : capacidade(cap), tamanho(0)
     {
         dados = new S[capacidade];
     }
 
-    //método que deleta a sequência de dados
+    // método que deleta a sequência de dados
     ~Sequencia()
     {
         delete[] dados;
     }
 
-    //método que retorna o tamanho/quantidade de dados que estão na sequência atualmente
+    // método que retorna o tamanho/quantidade de dados que estão na sequência atualmente
     int obterTamanho()
     {
         return tamanho;
     }
 
-    //método que adiciona mais valores para a sequência, com um verificador de tamanho em relação a capacidade da sequência
+    // método que adiciona mais valores para a sequência, com um verificador de tamanho em relação a capacidade da sequência
     void adicionar(S valor)
     {
         if (tamanho >= capacidade)
@@ -50,7 +50,7 @@ public:
         tamanho++;
     }
 
-    //método de consulta/alteração de valor dado um índice da sequência, com verificador de existência do índice
+    // método de consulta/alteração de valor dado um índice da sequência, com verificador de existência do índice
     S &operator[](int indice)
     {
         if (indice < 0 || indice >= tamanho)
@@ -60,7 +60,7 @@ public:
         return dados[indice];
     }
 
-    //método de remoção do último valor da sequência, com verficador de existência de sequência
+    // método de remoção do último valor da sequência, com verficador de existência de sequência
     void removerUltimo()
     {
         if (tamanho <= 0)
