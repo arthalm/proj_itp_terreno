@@ -27,13 +27,13 @@ class Paleta
 
 public:
     // construtor normal
-    Paleta(int cap = 0) : capacidade(cap), tamanho(0)
+    Paleta(int cap = 1) : capacidade(cap), tamanho(0)
     {
         cores = new Cor[capacidade];
     }
 
     // construtor do arquivo
-    Paleta(std::string arquivo) : capacidade(2), tamanho(0)
+    Paleta(std::string arquivo) : capacidade(1), tamanho(0)
     {
         cores = new Cor[capacidade];
 
@@ -42,7 +42,7 @@ public:
         std::string linha;
         while (std::getline(file, linha))
         { // pega uma linha do arquivo e armazena em linha
-            if (linha.size() != 7 || linha[0] != '#')
+            if (linha.size() != 7 || linha[0] != '#' || linha.empty())
             {
                 continue;
             }
