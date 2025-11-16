@@ -1,0 +1,6 @@
+#Extensões de arquivos que não precisam ir para o GitHub
+
+*.out
+*.exe
+.vscode/
+node_modules/
