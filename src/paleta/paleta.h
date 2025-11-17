@@ -38,17 +38,14 @@ public:
         std::string linha;
         while (std::getline(file, linha))
         {
-            if (linha.empty())
+            if (linha.size() != 7 || linha[0] != '#' || linha.empty())
             {
                 continue;
             }
-            if (linha[0] == '#')
-            {
-                linha.erase(0, 1);
-            }
-            std::string Re = linha.substr(0, 2);
-            std::string Gr = linha.substr(2, 2);
-            std::string Bl = linha.substr(4, 2);
+
+            std::string Re = linha.substr(1, 2);
+            std::string Gr = linha.substr(3, 2);
+            std::string Bl = linha.substr(5, 2);
 
             unsigned char R = std::stoi(Re, 0, 16);
             unsigned char G = std::stoi(Gr, 0, 16);
