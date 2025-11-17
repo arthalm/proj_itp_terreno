@@ -26,12 +26,12 @@ class Paleta
     }
 
 public:
-    Paleta(int cap = 0) : capacidade(cap), tamanho(0)
+    Paleta(int cap = 1) : capacidade(cap), tamanho(0)
     {
         cores = new Cor[capacidade];
     }
 
-    Paleta(std::string arquivo) : capacidade(0), tamanho(0)
+    Paleta(std::string arquivo) : capacidade(1), tamanho(0)
     {
         cores = new Cor[capacidade];
         std::ifstream file(arquivo);
