@@ -42,19 +42,15 @@ public:
         std::string linha;
         while (std::getline(file, linha))
         { // pega uma linha do arquivo e armazena em linha
-            if (linha.empty())
+            if (linha.size() != 7 || linha[0] != '#' || linha.empty())
             {
                 continue;
             }
-            if (linha[0] == '#')
-            {
-                linha.erase(0, 1); // remove 1 objeto a partir do indice 0
-            }
 
             // pega o codigo e separa em pares RR GG BB
-            std::string Re = linha.substr(0, 2);
-            std::string Gr = linha.substr(2, 2);
-            std::string Bl = linha.substr(4, 2);
+            std::string Re = linha.substr(1, 2);
+            std::string Gr = linha.substr(3, 2);
+            std::string Bl = linha.substr(5, 2);
 
             // converte a string com hexadecimal em int (stoi), e é recebido pelas variaveis
             unsigned char R = std::stoi(Re, 0, 16);
