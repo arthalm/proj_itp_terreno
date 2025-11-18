@@ -68,7 +68,7 @@ class Imagem
 public:
 
     //construtor normal
-    Imagem(int lar = 1, int alt = 1) : largura(lar), altura(alt)
+    Imagem(int lar = 0, int alt = 0) : largura(lar), altura(alt)
     {
         pixels = new Pixel *[largura];
         for (int i = 0; i < largura; i++)
@@ -81,24 +81,7 @@ public:
             }
         }
     }
-/*
-    //construtor do arquivo
-    Imagem(std::string arquivo) : largura(1), altura(1)
-    {
-        pixels = new Pixel *[largura];
-        for (int i = 0; i < largura; i++)
-        {
-            pixels[i] = new Pixel[altura];
-            for (int j = 0; j < altura; j++)
-            {
-                pixels[i][j] = {0, 0, 0};
-            }
-        }
 
-        std::ifstream file(arquivo);
-
-    }
-*/
     ~Imagem()
     {
         for (int i = 0; i < largura; i++)
@@ -107,6 +90,7 @@ public:
         }
         delete[] pixels;
     }
+
 
     int obterLargura()
     {
@@ -129,4 +113,49 @@ public:
         return pixels[lar][alt];
     }
 
+
+    bool lerPPM (std::string arquivo)
+    {
+        std::ifstream file(arquivo);
+
+        //vê se o arquivo está fechado
+        if (file.is_open() == false)
+        {
+            return false;
+        }
+
+        std::string formato;
+        int larg, alt, maxIntensidade;
+
+        file >> formato >> larg >> alt >> maxIntensidade;
+
+        for (int i = 0; i < larg; i++)
+        {
+            aumentarLargura();
+        }
+        for (int i = 0; i < alt; i++)
+        {
+            aumentarAltura();
+        }
+
+        for (int y = 0; y < alt; y++)
+        {
+            for (int x = 0; x < larg; x++)
+            {
+                int R, G, B;
+                file >> R >> G >> B;
+                pixels[x][y] = Pixel 
+                {
+                    static_cast<unsigned char>(R),
+                    static_cast<unsigned char>(G),
+                    static_cast<unsigned char>(B)
+                };
+            }
+        }
+
+        return true;
+    }
+
+
+    
 };
