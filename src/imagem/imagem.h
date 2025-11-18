@@ -1,6 +1,10 @@
+#include <fstream>
+#include <string>
+#include <iostream>
+
 struct Pixel
 {
-    unsigned char r, g, b; // unsigned char vao de 0 a 255
+    unsigned char r, g, b;
 };
 
 class Imagem
@@ -8,16 +12,62 @@ class Imagem
     int largura, altura;
     Pixel **pixels;
 
+    void aumentarLargura(){
+        largura += 1;
+        Pixel **novoL = new Pixel *[largura];
+
+        for (int i = 0; i < largura - 1; i++)
+        {
+            novoL[i] = pixels[i];
+        }
+        novoL[largura - 1] = new Pixel[altura];
+
+        for (int j = 0; j < altura; j++){
+            novoL[largura - 1][j] = {0, 0, 0};
+        }
+
+        delete[] pixels;
+        pixels = novoL;
+        
+    }
+
+    void aumentarAltura(){
+        altura += 1;
+    }
+
 public:
-    Imagem(int lar = 0, int alt = 0) : largura(lar), altura(alt)
+
+    //construtor normal
+    Imagem(int lar = 1, int alt = 1) : largura(lar), altura(alt)
     {
         pixels = new Pixel *[largura];
         for (int i = 0; i < largura; i++)
         {
             pixels[i] = new Pixel[altura];
+            for (int j = 0; j < altura; j++)
+            {
+                pixels[i][j] = {0, 0, 0};
+            }
         }
     }
+/*
+    //construtor do arquivo
+    Imagem(std::string arquivo) : largura(1), altura(1)
+    {
+        pixels = new Pixel *[largura];
+        for (int i = 0; i < largura; i++)
+        {
+            pixels[i] = new Pixel[altura];
+            for (int j = 0; j < altura; j++)
+            {
+                pixels[i][j] = {0, 0, 0};
+            }
+        }
 
+        std::ifstream file(arquivo);
+
+    }
+*/
     ~Imagem()
     {
         for (int i = 0; i < largura; i++)
@@ -32,10 +82,12 @@ public:
         return largura;
     }
 
+
     int obterAltura()
     {
         return altura;
     }
+
 
     Pixel &operator()(int lar, int alt)
     {
@@ -45,4 +97,5 @@ public:
         }
         return pixels[lar][alt];
     }
+
 };
