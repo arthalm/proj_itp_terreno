@@ -13,28 +13,56 @@ class Imagem
     int largura, altura;
     Pixel **pixels;
 
-    void aumentarLargura(){
-        largura += 1;
-        Pixel **novoL = new Pixel *[largura]; //novo array de ponteiros com largura maior
 
-        for (int i = 0; i < largura - 1; i++) // -1 pq a ultima é o tamanho novo
+    void aumentarLargura(){
+        int novaLargura = largura + 1;
+        Pixel **novaLinha = new Pixel *[novaLargura]; //novo array de ponteiros com largura maior
+
+        //copiando dados
+        for (int i = 0; i < largura; i++)
         {
-            novoL[i] = pixels[i];
+            novaLinha[i] = pixels[i];
         }
 
-        //na parte aumentada, cria uma coluna onde todos os elementos são preto
-        novoL[largura - 1] = new Pixel[altura];
-        for (int j = 0; j < altura; j++){
-            novoL[largura - 1][j] = {0, 0, 0};
+        //adiconando preto na nova coluna
+        novaLinha[largura] = new Pixel[altura];
+        for (int j = 0; j < altura; j++)
+        {
+            novaLinha[largura][j] = {0, 0, 0};
         }
 
         delete[] pixels;
-        pixels = novoL;
+        pixels = novaLinha;
+        largura = novaLargura;
         
     }
 
+
     void aumentarAltura(){
-        altura += 1;
+        int novaAltura = altura + 1;
+
+        //para cada coluna
+        for (int i = 0; i < largura; i++)
+        {
+            Pixel *novaColuna = new Pixel[novaAltura];
+
+            //copiando dados
+            for (int j = 0; j < altura; j++)
+            {
+                novaColuna[j] = pixels[i][j];
+            }
+
+            //adicionar preto na nova linha
+            for (int j = altura; j < novaAltura; j++)
+            {
+                novaColuna[j] = {0, 0, 0};
+            }
+
+            //((pixels[i] é a coluna antiga))
+            delete[] pixels[i];
+            pixels[i] = novaColuna;
+        }
+        altura = novaAltura;
     }
 
 public:
