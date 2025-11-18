@@ -1,3 +1,4 @@
+//includes necessários agora e nas próximas funções
 #include <fstream>
 #include <string>
 #include <iostream>
@@ -14,14 +15,15 @@ class Imagem
 
     void aumentarLargura(){
         largura += 1;
-        Pixel **novoL = new Pixel *[largura];
+        Pixel **novoL = new Pixel *[largura]; //novo array de ponteiros com largura maior
 
-        for (int i = 0; i < largura - 1; i++)
+        for (int i = 0; i < largura - 1; i++) // -1 pq a ultima é o tamanho novo
         {
             novoL[i] = pixels[i];
         }
-        novoL[largura - 1] = new Pixel[altura];
 
+        //na parte aumentada, cria uma coluna onde todos os elementos são preto
+        novoL[largura - 1] = new Pixel[altura];
         for (int j = 0; j < altura; j++){
             novoL[largura - 1][j] = {0, 0, 0};
         }
@@ -44,6 +46,7 @@ public:
         for (int i = 0; i < largura; i++)
         {
             pixels[i] = new Pixel[altura];
+            //para iniciar com a cor preta
             for (int j = 0; j < altura; j++)
             {
                 pixels[i][j] = {0, 0, 0};
