@@ -1,5 +1,3 @@
-#include "../paleta/paleta.h"
-
 struct Pixel
 {
     unsigned char r, g, b; // unsigned char vao de 0 a 255
@@ -39,8 +37,12 @@ public:
         return altura;
     }
 
-    Imagem &operator()(int lar, int alt)
+    Pixel &operator()(int lar, int alt)
     {
-        
+        if ((lar > largura || alt > altura) || (lar < 0 || alt < 0))
+        {
+            std::cerr << "Erro! Posição de pixel inválida.\n";
+        }
+        return pixels[lar][alt];
     }
 };
