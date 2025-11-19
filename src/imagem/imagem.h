@@ -2,11 +2,9 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include "../paleta/paleta.h"
 
-struct Pixel
-{
-    unsigned char r, g, b;
-};
+using Pixel = Cor;
 
 class Imagem
 {
