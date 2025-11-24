@@ -19,6 +19,7 @@ TEST_CASE("Testa a modificação e acesso aos pixels da imagem") {
     CHECK(pixel.b == 0);
 }
 
+
 TEST_CASE("Testa a leitura de uma imagem em formato PPM") {
     Imagem img;
     bool sucesso = img.lerPPM("imagem.ppm");
