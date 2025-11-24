@@ -11,59 +11,16 @@ class Imagem
     int largura, altura;
     Pixel **pixels;
 
-    void aumentarLargura()
+    void alocarEspaco(int larg, int alt)
     {
-        int novaLargura = largura + 1;
-        Pixel **novaLinha = new Pixel *[novaLargura]; // novo array de ponteiros com largura maior
-
-        // copiando dados
-        for (int i = 0; i < largura; i++)
+        pixels = new Pixel *[larg];
+        for (int i = 0; i < larg; i++)
         {
-            novaLinha[i] = pixels[i];
+            pixels[i] = new Pixel[alt];
         }
-
-        // adiconando preto na nova coluna
-        novaLinha[largura] = new Pixel[altura];
-        for (int j = 0; j < altura; j++)
-        {
-            novaLinha[largura][j] = {0, 0, 0};
-        }
-
-        //remove array de ponteiros antiga, mas as colunas se mantém
-        delete[] pixels;
-        pixels = novaLinha;
-        largura = novaLargura;
     }
 
-    void aumentarAltura()
-    {
-        int novaAltura = altura + 1;
-
-        // para cada coluna
-        for (int i = 0; i < largura; i++)
-        {
-            Pixel *novaColuna = new Pixel[novaAltura];
-
-            // copiando dados
-            for (int j = 0; j < altura; j++)
-            {
-                novaColuna[j] = pixels[i][j];
-            }
-
-            // adicionar preto na nova linha
-            for (int j = altura; j < novaAltura; j++)
-            {
-                novaColuna[j] = {0, 0, 0};
-            }
-
-            //((pixels[i] é a coluna antiga))
-            delete[] pixels[i];
-            pixels[i] = novaColuna;
-        }
-        altura = novaAltura;
-    }
-
-    //lerPPM tambem vai usar isso do destrutor
+    // lerPPM tambem vai usar isso do destrutor
     void limpar()
     {
         for (int i = 0; i < largura; i++)
@@ -75,13 +32,11 @@ class Imagem
 
 public:
     // construtor
-    Imagem(int lar = 0, int alt = 0) : largura(lar), altura(alt)
+    Imagem(int larg = 0, int alt = 0) : largura(larg), altura(alt)
     {
-        pixels = new Pixel *[largura];
+        alocarEspaco(largura, altura);
         for (int i = 0; i < largura; i++)
         {
-            pixels[i] = new Pixel[altura];
-            // para iniciar com a cor preta
             for (int j = 0; j < altura; j++)
             {
                 pixels[i][j] = {0, 0, 0};
@@ -129,22 +84,15 @@ public:
 
         file >> formato >> larg >> alt >> maxIntensidade;
 
-        //o que tem no PPM vai substituir a imagem atual
-        //precisa limpar a imagem antiga agr
-        //ja que o destrutor só limparia no final do codigo
+        // o que tem no PPM vai substituir a imagem atual
+        // precisa limpar a imagem antiga agr
+        // ja que o destrutor só limparia no final do codigo
         limpar();
-        largura = 0;
-        altura = 0;
+        largura = larg;
+        altura = alt;
         pixels = nullptr;
 
-        for (int i = 0; i < larg; i++)
-        {
-            aumentarLargura();
-        }
-        for (int i = 0; i < alt; i++)
-        {
-            aumentarAltura();
-        }
+        alocarEspaco(larg, alt);
 
         for (int y = 0; y < alt; y++)
         {
@@ -176,9 +124,9 @@ public:
         int larg = largura, alt = altura;
 
         file << formato << std::endl;
-        file << std::to_string(larg) << " " << std::to_string(alt) << std::endl;
+        file << larg << " " << alt << std::endl;
 
-        //não precisa aumentar tamanho nessa parte
+        // não precisa aumentar tamanho nessa parte
 
         file << maxIntensidade << std::endl;
 
@@ -191,7 +139,7 @@ public:
                 Gr = pixels[x][y].g;
                 Bl = pixels[x][y].b;
 
-                file << std::to_string(Re) << " " << std::to_string(Gr) << " " << std::to_string(Bl) << std::endl;
+                file << Re << " " << Gr << " " << Bl << std::endl;
             }
         }
         return true;
