@@ -29,6 +29,7 @@ class Imagem
             novaLinha[largura][j] = {0, 0, 0};
         }
 
+        //remove array de ponteiros antiga, mas as colunas se mantém
         delete[] pixels;
         pixels = novaLinha;
         largura = novaLargura;
@@ -62,8 +63,18 @@ class Imagem
         altura = novaAltura;
     }
 
+    //lerPPM tambem vai usar isso do destrutor
+    void limpar()
+    {
+        for (int i = 0; i < largura; i++)
+        {
+            delete[] pixels[i];
+        }
+        delete[] pixels;
+    }
+
 public:
-    // construtor normal
+    // construtor
     Imagem(int lar = 0, int alt = 0) : largura(lar), altura(alt)
     {
         pixels = new Pixel *[largura];
@@ -80,11 +91,7 @@ public:
 
     ~Imagem()
     {
-        for (int i = 0; i < largura; i++)
-        {
-            delete[] pixels[i];
-        }
-        delete[] pixels;
+        limpar();
     }
 
     int obterLargura()
@@ -99,7 +106,7 @@ public:
 
     Pixel &operator()(int lar, int alt)
     {
-        if ((lar > largura || alt > altura) || (lar < 0 || alt < 0))
+        if ((lar >= largura || alt >= altura) || (lar < 0 || alt < 0))
         {
             std::cerr << "Erro! Posição de pixel inválida.\n";
         }
@@ -121,6 +128,14 @@ public:
         int larg, alt, maxIntensidade;
 
         file >> formato >> larg >> alt >> maxIntensidade;
+
+        //o que tem no PPM vai substituir a imagem atual
+        //precisa limpar a imagem antiga agr
+        //ja que o destrutor só limparia no final do codigo
+        limpar();
+        largura = 0;
+        altura = 0;
+        pixels = nullptr;
 
         for (int i = 0; i < larg; i++)
         {
@@ -163,25 +178,18 @@ public:
         file << formato << std::endl;
         file << std::to_string(larg) << " " << std::to_string(alt) << std::endl;
 
-        for (int i = 0; i < larg; i++)
-        {
-            aumentarLargura();
-        }
-        for (int i = 0; i < alt; i++)
-        {
-            aumentarAltura();
-        }
+        //não precisa aumentar tamanho nessa parte
 
         file << maxIntensidade << std::endl;
 
-        for (int i = 0; i < larg; i++)
+        for (int y = 0; y < larg; y++)
         {
-            for (int j = 0; j < alt; j++)
+            for (int x = 0; x < alt; x++)
             {
                 int Re, Gr, Bl;
-                Re = pixels[j][i].r;
-                Gr = pixels[j][i].g;
-                Bl = pixels[j][i].b;
+                Re = pixels[x][y].r;
+                Gr = pixels[x][y].g;
+                Bl = pixels[x][y].b;
 
                 file << std::to_string(Re) << " " << std::to_string(Gr) << " " << std::to_string(Bl) << std::endl;
             }
