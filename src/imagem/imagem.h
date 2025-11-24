@@ -92,7 +92,7 @@ public:
         altura = alt;
         pixels = nullptr;
 
-        alocarEspaco(larg, alt);
+        alocarEspaco(largura, altura);
 
         for (int y = 0; y < alt; y++)
         {
