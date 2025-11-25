@@ -1,16 +1,29 @@
+#include <cmath>
+
 class Terreno {
-    int profundidade, largura;
+    int expoente;
+    int dimensao;
     int **mapa;
+
+    int potencia(int n)
+    {
+        if (n == 0)
+        {
+            return 1;
+        }
+        int resultado = pow(2, n) + 1;
+        return resultado;
+    }
 
 public:
 
-    Terreno(int col = 2, int lin = 2): profundidade(col) , largura(lin)
+    Terreno(int exp = 0): expoente(exp), dimensao(potencia(exp))
     {
-        mapa = new int*[profundidade];
-        for (int i = 0; i < profundidade; i++)
+        mapa = new int*[dimensao];
+        for (int i = 0; i < dimensao; i++)
         {
-            mapa[i] = new int [largura];
-            for (int j = 0; j < largura; j++)
+            mapa[i] = new int [dimensao];
+            for (int j = 0; j < dimensao; j++)
             {
                 mapa[i][j] = 0;
             }
@@ -19,7 +32,7 @@ public:
 
     ~Terreno ()
     {
-        for (int i = 0; i < profundidade; i++)
+        for (int i = 0; i < dimensao; i++)
         {
             delete[] mapa[i];
         }
@@ -29,12 +42,12 @@ public:
 
     int obterLargura()
     {
-        return largura;
+        return dimensao;
     }
 
     int obterProfundidade()
     {
-        return profundidade;
+        return dimensao;
     }
 
 };
