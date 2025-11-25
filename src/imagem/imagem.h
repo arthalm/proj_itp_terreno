@@ -59,13 +59,13 @@ public:
         return altura;
     }
 
-    Pixel &operator()(int lar, int alt)
+    Pixel &operator()(int larg, int alt)
     {
-        if ((lar >= largura || alt >= altura) || (lar < 0 || alt < 0))
+        if ((larg >= largura || alt >= altura) || (larg < 0 || alt < 0))
         {
             std::cerr << "Erro! Posição de pixel inválida.\n";
         }
-        return pixels[lar][alt];
+        return pixels[larg][alt];
     }
 
     bool lerPPM(std::string arquivo)
