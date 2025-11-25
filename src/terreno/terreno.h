@@ -2,8 +2,10 @@
 
 class Terreno {
     int expoente;
-    int dimensao;
-    int semente;
+    int largura;
+    int profundidade;
+    //evitar valores negativos
+    unsigned int semente;
     int **mapa;
 
     int potencia(int n)
@@ -12,8 +14,7 @@ class Terreno {
         {
             return 1;
         }
-        int resultado = pow(2, n) + 1;
-        return resultado;
+        return pow (2, n) + 1;
     }
 
         //metodo LCG
@@ -27,14 +28,17 @@ class Terreno {
     }
 
 public:
-
-    Terreno(int exp = 0, int seed = 1): expoente(exp), dimensao(potencia(exp)), semente(seed)
+    Terreno(int exp = 0, int seed = 1)
+        : expoente(exp),
+          largura(potencia(exp)),
+          profundidade(potencia(exp)),
+          semente(seed)
     {
-        mapa = new int*[dimensao];
-        for (int i = 0; i < dimensao; i++)
+        mapa = new int *[largura];
+        for (int i = 0; i < largura; i++)
         {
-            mapa[i] = new int [dimensao];
-            for (int j = 0; j < dimensao; j++)
+            mapa[i] = new int[profundidade];
+            for (int j = 0; j < profundidade; j++)
             {
                 mapa[i][j] = 0;
             }
@@ -43,7 +47,7 @@ public:
 
     ~Terreno ()
     {
-        for (int i = 0; i < dimensao; i++)
+        for (int i = 0; i < largura; i++)
         {
             delete[] mapa[i];
         }
@@ -53,19 +57,29 @@ public:
 
     int obterLargura()
     {
-        return dimensao;
+        return largura;
     }
 
     int obterProfundidade()
     {
-        return dimensao;
+        return profundidade;
+    }
+
+    int &operator()(int lar, int prf)
+    {
+        if ((lar >= largura || prf >= profundidade) || (lar < 0 || prf < 0))
+        {
+            std::cerr << "Erro! Posição de pixel inválida.\n";
+            static int erro = 0;
+            return erro;
+        }
+        return mapa[lar][prf];
     }
 
     int aleatorio (int minimo, int maximo)
     {
         int valor = gerarNumero();
         return minimo + (valor % (maximo - minimo + 1));
-
     }
 
 
