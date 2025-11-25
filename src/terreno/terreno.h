@@ -76,10 +76,23 @@ public:
         return mapa[lar][prf];
     }
 
-    int aleatorio (int minimo, int maximo)
+        int aleatorio(int minimo, int maximo)
     {
         int valor = gerarNumero();
         return minimo + (valor % (maximo - minimo + 1));
+    }
+
+
+    void gerarMapa (int minimo, int maximo)
+    {
+        //canto superior esquerdo
+        mapa[0][0] = aleatorio(minimo, maximo);
+        //canto superior direito
+        mapa[0][largura - 1] = aleatorio(minimo, maximo);
+        //canto inferior esquerdo
+        mapa[profundidade - 1][0] = aleatorio(minimo,maximo);
+        //canto inferior direito
+        mapa[profundidade - 1][largura - 1] = aleatorio(minimo, maximo);
     }
 
 
