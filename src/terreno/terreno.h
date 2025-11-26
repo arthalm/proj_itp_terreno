@@ -1,3 +1,4 @@
+#include <iostream>
 #include <cmath>
 
 class Terreno {
@@ -14,7 +15,7 @@ class Terreno {
         {
             return 1;
         }
-        return pow (2, n) + 1;
+        return std::pow (2, n) + 1;
     }
 
         //metodo LCG
@@ -29,11 +30,11 @@ class Terreno {
 
 public:
     Terreno(int exp = 0, int seed = 1)
-        : expoente(exp),
-          largura(potencia(exp)),
-          profundidade(potencia(exp)),
-          semente(seed)
+        : expoente(exp), semente(seed)
     {
+        largura = potencia(expoente);
+        profundidade = potencia(expoente);
+
         mapa = new int *[largura];
         for (int i = 0; i < largura; i++)
         {
@@ -69,7 +70,7 @@ public:
     {
         if ((lar >= largura || prf >= profundidade) || (lar < 0 || prf < 0))
         {
-            std::cerr << "Erro! Posição de pixel inválida.\n";
+            std::cerr << "Erro! Posição inválida.\n";
             static int erro = 0;
             return erro;
         }
@@ -79,7 +80,20 @@ public:
         int aleatorio(int minimo, int maximo)
     {
         int valor = gerarNumero();
-        return minimo + (valor % (maximo - minimo + 1));
+        int intervalo = maximo - minimo;
+
+        if(intervalo < 0)
+        {
+            intervalo = - intervalo;
+        }
+        intervalo += 1;
+
+        int menor = minimo;
+        if (maximo < minimo)
+        {
+            menor = maximo;
+        }
+        return menor + (valor % intervalo);
     }
 
 
