@@ -32,6 +32,70 @@ TEST_CASE("Testa a geração de números aleatorios dentro do intervalo")
         CHECK(v <= 10);
     }
 }
+
+TEST_CASE("Testa gerarMapa nos quatro cantos para terreno 2x2") {
+    Terreno terreno(1, 42); // 2^1 + 1 = 3
+    
+    terreno.gerarMapa(0, 100);
+    
+    // Verifica se os quatro cantos foram inicializados
+    CHECK(terreno(0, 0) >= 0);
+    CHECK(terreno(0, 0) <= 100);
+    
+    CHECK(terreno(0, 2) >= 0);
+    CHECK(terreno(0, 2) <= 100);
+    
+    CHECK(terreno(2, 0) >= 0);
+    CHECK(terreno(2, 0) <= 100);
+    
+    CHECK(terreno(2, 2) >= 0);
+    CHECK(terreno(2, 2) <= 100);
+}
+
+TEST_CASE("Testa gerarMapa com numero negativo") {
+    Terreno terreno(1, 123);
+    
+    terreno.gerarMapa(-10, 10);
+    
+    // Verifica se os valores estão no intervalo -10 a 10
+    CHECK(terreno(0, 0) >= -10);
+    CHECK(terreno(0, 0) <= 10);
+    
+    CHECK(terreno(0, 2) >= -10);
+    CHECK(terreno(0, 2) <= 10);
+    
+    CHECK(terreno(2, 0) >= -10);
+    CHECK(terreno(2, 0) <= 10);
+    
+    CHECK(terreno(2, 2) >= -10);
+    CHECK(terreno(2, 2) <= 10);
+}
+
+TEST_CASE("Testa visualização do terreno")
+{
+    Terreno terreno(5, 42); // mude onde está o 5 para ter diferentes tamanhos de matriz
+    terreno.gerarMapa(0, 100); //alt minima e maxima
+
+    SUBCASE("Terreno 5x5")
+    {
+        std::cout << "\nTerreno 5x5 gerado:\n";
+        for (int i = 0; i < terreno.obterProfundidade(); i++)
+        {
+            for (int j = 0; j < terreno.obterLargura(); j++)
+            {
+                std::cout << terreno(i, j) << "\t";
+            }
+            std::cout << "\n";
+        }
+        std::cout << "\n";
+    }
+
+    // Verifica se os cantos foram realmente inicializados primeiro (teste qualquer)
+    CHECK(terreno(0, 0) != 0);
+    CHECK(terreno(0, 4) != 0);
+    CHECK(terreno(4, 0) != 0);
+    CHECK(terreno(4, 4) != 0);
+}
 // Você precisará criar testes adicionais para cobrir os métodos privados da classe.
 // Por exemplo, você pode criar testes para os métodos das etapas Square e Diamond
 // Você pode torná-los públicos temporariamente para fins de teste ou usar técnicas como "friend testing".
