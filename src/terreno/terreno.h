@@ -10,6 +10,24 @@ class Terreno
     unsigned int semente;
     int **mapa;
 
+    void alocarEspaco(int prf, int larg)
+    {
+        mapa = new int *[prf];
+        for (int i = 0; i < prf; i++)
+        {
+            mapa[i] = new int[larg];
+        }
+    }
+
+    void limpar()
+    {
+        for (int i = 0; i < profundidade; i++)
+        {
+            delete[] mapa[i];
+        }
+        delete[] mapa;
+    }
+
     int potencia(int n)
     {
         if (n == 0)
@@ -161,24 +179,20 @@ public:
         profundidade = potencia(expoente);
         largura = potencia(expoente);
 
-        mapa = new int *[profundidade];
+        alocarEspaco(profundidade, largura);
         for (int i = 0; i < profundidade; i++)
         {
-            mapa[i] = new int[largura];
             for (int j = 0; j < largura; j++)
             {
                 mapa[i][j] = 0;
             }
         }
     }
+    
 
     ~Terreno()
     {
-        for (int i = 0; i < profundidade; i++)
-        {
-            delete[] mapa[i];
-        }
-        delete[] mapa;
+        limpar();
     }
 
     int obterLargura()
@@ -191,15 +205,20 @@ public:
         return profundidade;
     }
 
-    int &operator()(int lar, int prf)
+    int obterSemente()
     {
-        if ((lar >= largura || prf >= profundidade) || (lar < 0 || prf < 0))
+        return semente;
+    }
+
+    int &operator()(int prf, int larg)
+    {
+        if ((larg >= largura || prf >= profundidade) || (larg < 0 || prf < 0))
         {
             std::cerr << "Erro! Posição inválida.\n";
             static int erro = 0;
             return erro;
         }
-        return mapa[prf][lar];
+        return mapa[prf][larg];
     }
 
 
@@ -267,5 +286,76 @@ public:
                     mapa[x][y] = maximo;
             }
         }
+    }
+
+    bool salvarPPM(std::string arquivo, int min, int max)
+    {
+        // criar e ler arquivo
+        std::ofstream file(arquivo);
+
+        if (file.is_open() == false)
+        {
+            return false;
+        }
+
+        int prf = profundidade, larg = largura;
+
+        file << prf << " " << larg << std::endl;
+
+        int smnt = semente;
+        file << smnt << std::endl;
+
+        file << min << " " << max << std::endl;
+
+        for (int x = 0; x < profundidade; x++)
+        {
+            for (int y = 0; y < largura; y++)
+            {
+                file << mapa[x][y];
+                if (y < largura - 1)
+                {
+                    file << " ";
+                }
+            }
+            file << std::endl;
+        }
+
+        return true;
+    }
+
+    bool lerPPM(std::string arquivo)
+    {
+        // ler arquivo
+        std::ifstream file(arquivo);
+
+        // vê se o arquivo está fechado
+        if (file.is_open() == false)
+        {
+            return false;
+        }
+
+        file >> profundidade >> largura;
+
+        file >> semente;
+
+        int min, max;
+        file >> min >> max;
+
+        limpar();
+        mapa = nullptr;
+
+        alocarEspaco(profundidade, largura);
+
+        for (int x = 0; x < profundidade; x++)
+        {
+            for (int y = 0; y < largura; y++)
+            {
+                int altitude;
+                file >> altitude;
+                mapa[x][y] = altitude;
+            }
+        }
+
+        return true;
     }
 };
