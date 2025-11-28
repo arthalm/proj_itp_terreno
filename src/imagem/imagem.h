@@ -106,7 +106,6 @@ public:
                     static_cast<unsigned char>(B)};
             }
         }
-
         return true;
     }
 
@@ -120,15 +119,14 @@ public:
             return false;
         }
 
-        std::string formato = "P3", maxIntensidade = "255";
-        int larg = largura, alt = altura;
+        std::string formato = "P3";
+        int maxIntensidade = 255, larg = largura, alt = altura;
 
         file << formato << std::endl;
         file << larg << " " << alt << std::endl;
+        file << maxIntensidade << std::endl;
 
         // não precisa aumentar tamanho nessa parte
-
-        file << maxIntensidade << std::endl;
 
         for (int y = 0; y < larg; y++)
         {
