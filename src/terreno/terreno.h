@@ -69,7 +69,7 @@ class Terreno
             media /= cont;
             int ruido = aleatorio(-variacao, variacao);
             int novoValor = (int)(media + ruido);
-            mapa[x][y] = limitarValor(novoValor, -variacao*2, variacao*2);
+            mapa[x][y] = novoValor;
         }
     }
 
@@ -113,11 +113,11 @@ class Terreno
             media /= cont;
             int ruido = aleatorio(-variacao, variacao);
             int novoValor = (int)(media + ruido);
-            mapa[x][y] = limitarValor(novoValor, -variacao * 2, variacao * 2); // Aproximado
+            mapa[x][y] = novoValor;
         }
     }
 
-    void diamondSquare( int tamanho, int variacao)
+    void diamondSquare(int tamanho, int variacao)
     {
         int metade = tamanho / 2;
         if (metade < 1)
@@ -125,17 +125,18 @@ class Terreno
             return;
         }
 
-        for(int y = metade; y < largura; y += tamanho){
-            for(int x = metade; x < profundidade; x += tamanho){
+        for (int x = metade; x < profundidade; x += tamanho)
+        {
+            for (int y = metade; y < largura; y += tamanho)
+            {
                 square(x, y, metade, variacao);
             }
         }
 
-        for (int y = 0; y < largura; y += metade)
+        for (int x = 0; x < profundidade; x += metade)
         {
-            for (int x = (y / metade) % 2 == 0 ? metade : 0;
-                 x < profundidade;
-                 x += tamanho)
+            int inicioY = (x / metade) % 2 == 0 ? metade : 0;
+            for (int y = inicioY; y < largura; y += tamanho)
             {
                 if (x < profundidade && y < largura)
                 {
@@ -144,24 +145,27 @@ class Terreno
             }
         }
 
-        int novaVariacao = variacao * 0.7;
-        if (novaVariacao < 3)
-            novaVariacao = 3;
-        diamondSquare(metade, novaVariacao);
+        if (metade > 1)
+        {
+            int novaVariacao = variacao * 0.7;
+            if (novaVariacao < 1)
+                novaVariacao = 1;
+            diamondSquare(metade, novaVariacao);
+        }
     }
 
 public:
     Terreno(int exp = 0, int seed = 1)
         : expoente(exp), semente(seed)
     {
-        largura = potencia(expoente);
         profundidade = potencia(expoente);
+        largura = potencia(expoente);
 
-        mapa = new int *[largura];
-        for (int i = 0; i < largura; i++)
+        mapa = new int *[profundidade];
+        for (int i = 0; i < profundidade; i++)
         {
-            mapa[i] = new int[profundidade];
-            for (int j = 0; j < profundidade; j++)
+            mapa[i] = new int[largura];
+            for (int j = 0; j < largura; j++)
             {
                 mapa[i][j] = 0;
             }
@@ -170,7 +174,7 @@ public:
 
     ~Terreno()
     {
-        for (int i = 0; i < largura; i++)
+        for (int i = 0; i < profundidade; i++)
         {
             delete[] mapa[i];
         }
@@ -195,27 +199,22 @@ public:
             static int erro = 0;
             return erro;
         }
-        return mapa[lar][prf];
+        return mapa[prf][lar];
     }
 
-    // corrigido para conseguir lidar com numeros negativos
+
     int aleatorio(int minimo, int maximo)
     {
-        int valor = gerarNumero();
-        int intervalo = maximo - minimo;
-
-        if (intervalo < 0)
-        {
-            intervalo = -intervalo;
-        }
-        intervalo += 1;
-
-        int menor = minimo;
         if (maximo < minimo)
         {
-            menor = maximo;
+            int temp = minimo;
+            minimo = maximo;
+            maximo = temp;
         }
-        return menor + (valor % intervalo);
+
+        int valor = gerarNumero();
+        int intervalo = (maximo - minimo) + 1; // sem o 1 nunca geraria o valor maximo
+        return minimo + (valor % intervalo);
     }
 
     int limitarValor(int valor, int minimo, int maximo)
@@ -249,6 +248,7 @@ public:
             menor = maximo;
             maior = minimo;
         }
+
         int distInicial = (maior - menor) / 2;
         if (distInicial < 1)
         {
@@ -257,14 +257,14 @@ public:
 
         diamondSquare(largura / 2, distInicial);
 
-        for (int i = 0; i < largura; i++)
+        for (int x = 0; x < profundidade; x++)
         {
-            for (int j = 0; j < profundidade; j++)
+            for (int y = 0; y < largura; y++)
             {
-                if (mapa[i][j] < minimo)
-                    mapa[i][j] = minimo;
-                if (mapa[i][j] > maximo)
-                    mapa[i][j] = maximo;
+                if (mapa[x][y] < minimo)
+                    mapa[x][y] = minimo;
+                if (mapa[x][y] > maximo)
+                    mapa[x][y] = maximo;
             }
         }
     }

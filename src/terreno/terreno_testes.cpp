@@ -74,7 +74,7 @@ TEST_CASE("Testa gerarMapa com numero negativo") {
 TEST_CASE("Testa visualização do terreno")
 {
     Terreno terreno(5, 42); // mude onde está o 5 para ter diferentes tamanhos de matriz
-    terreno.gerarMapa(0, 100); //alt minima e maxima
+    terreno.gerarMapa(0, 300); //alt minima e maxima
 
     SUBCASE("Terreno 5x5")
     {
