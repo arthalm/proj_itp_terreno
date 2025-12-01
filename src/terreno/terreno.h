@@ -3,12 +3,9 @@
 
 class Terreno
 {
-    int expoente;
-    int largura;
-    int profundidade;
+    int expoente, profundidade, largura, **mapa;
     // evitar valores negativos
     unsigned int semente;
-    int **mapa;
 
     void alocarEspaco(int prf, int larg)
     {
@@ -21,11 +18,14 @@ class Terreno
 
     void limpar()
     {
+        if (mapa == nullptr)
+            return;
         for (int i = 0; i < profundidade; i++)
         {
             delete[] mapa[i];
         }
         delete[] mapa;
+        mapa = nullptr;
     }
 
     int potencia(int n)
@@ -42,8 +42,8 @@ class Terreno
     {
         // A = 1103515245
         // C = 12345
-        // M = 32768 (potencia de 2 (2¹⁵))
-        semente = (semente * 1103515245 + 12345) % 32768;
+        // M = 0x7fffffff
+        semente = (semente * 1103515245 + 12345) & 0x7fffffff;
         return semente;
     }
 
@@ -138,37 +138,33 @@ class Terreno
     void diamondSquare(int tamanho, int variacao)
     {
         int metade = tamanho / 2;
-        if (metade < 1)
-        {
-            return;
-        }
 
-        for (int x = metade; x < profundidade; x += tamanho)
+        while (metade >= 1)
         {
-            for (int y = metade; y < largura; y += tamanho)
+
+            for (int x = metade; x < tamanho; x += (metade * 2))
             {
-                square(x, y, metade, variacao);
+                for (int y = metade; y < tamanho; y += (metade * 2))
+                {
+                    square(x, y, metade, variacao);
+                }
             }
-        }
 
-        for (int x = 0; x < profundidade; x += metade)
-        {
-            int inicioY = (x / metade) % 2 == 0 ? metade : 0;
-            for (int y = inicioY; y < largura; y += tamanho)
+            for (int x = 0; x < tamanho; x += metade)
             {
-                if (x < profundidade && y < largura)
+                for (int y = ((x / metade) % 2 == 0 ? metade : 0); y < tamanho; y += (metade * 2))
                 {
                     diamond(x, y, metade, variacao);
                 }
             }
-        }
 
-        if (metade > 1)
-        {
-            int novaVariacao = variacao * 0.7;
-            if (novaVariacao < 1)
-                novaVariacao = 1;
-            diamondSquare(metade, novaVariacao);
+            metade /= 2;
+
+            variacao *= 0.5;
+            if (variacao < 1)
+            {
+                variacao = 1;
+            }
         }
     }
 
@@ -188,7 +184,6 @@ public:
             }
         }
     }
-    
 
     ~Terreno()
     {
@@ -221,7 +216,6 @@ public:
         return mapa[prf][larg];
     }
 
-
     int aleatorio(int minimo, int maximo)
     {
         if (maximo < minimo)
@@ -236,19 +230,6 @@ public:
         return minimo + (valor % intervalo);
     }
 
-    int limitarValor(int valor, int minimo, int maximo)
-    {
-        if (valor < minimo)
-        {
-            return minimo;
-        }
-        if (valor > maximo)
-        {
-            return maximo;
-        }
-        return valor;
-    }
-
     void gerarMapa(int minimo, int maximo)
     {
         // canto superior esquerdo
@@ -259,6 +240,16 @@ public:
         mapa[profundidade - 1][0] = aleatorio(minimo, maximo);
         // canto inferior direito
         mapa[profundidade - 1][largura - 1] = aleatorio(minimo, maximo);
+        // centro da matriz
+        mapa[profundidade / 2][largura / 2] = aleatorio(minimo, maximo);
+
+        int h = (largura - 1) / 2;
+
+        // meios dos lados
+        mapa[h][0] = aleatorio(minimo, maximo);
+        mapa[0][h] = aleatorio(minimo, maximo);
+        mapa[h][largura - 1] = aleatorio(minimo, maximo);
+        mapa[largura - 1][h] = aleatorio(minimo, maximo);
 
         int menor = minimo;
         int maior = maximo;
@@ -274,7 +265,7 @@ public:
             distInicial = 1;
         }
 
-        diamondSquare(largura / 2, distInicial);
+        diamondSquare(largura, distInicial);
 
         for (int x = 0; x < profundidade; x++)
         {
@@ -288,7 +279,7 @@ public:
         }
     }
 
-    bool salvarPPM(std::string arquivo, int min, int max)
+    bool salvarHeightMap(std::string arquivo, int min, int max)
     {
         // criar e ler arquivo
         std::ofstream file(arquivo);
@@ -302,8 +293,8 @@ public:
 
         file << prf << " " << larg << std::endl;
 
-        int smnt = semente;
-        file << smnt << std::endl;
+        int seed = semente;
+        file << seed << std::endl;
 
         file << min << " " << max << std::endl;
 
@@ -319,11 +310,10 @@ public:
             }
             file << std::endl;
         }
-
         return true;
     }
 
-    bool lerPPM(std::string arquivo)
+    bool lerHeightMap(std::string arquivo)
     {
         // ler arquivo
         std::ifstream file(arquivo);
@@ -341,9 +331,6 @@ public:
         int min, max;
         file >> min >> max;
 
-        limpar();
-        mapa = nullptr;
-
         alocarEspaco(profundidade, largura);
 
         for (int x = 0; x < profundidade; x++)
@@ -355,7 +342,6 @@ public:
                 mapa[x][y] = altitude;
             }
         }
-
         return true;
     }
 };
