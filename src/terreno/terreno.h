@@ -230,19 +230,6 @@ public:
         return minimo + (valor % intervalo);
     }
 
-    int limitarValor(int valor, int minimo, int maximo)
-    {
-        if (valor < minimo)
-        {
-            return minimo;
-        }
-        if (valor > maximo)
-        {
-            return maximo;
-        }
-        return valor;
-    }
-
     void gerarMapa(int minimo, int maximo)
     {
         // canto superior esquerdo
