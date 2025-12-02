@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
+#include "../imagem/imagem.h"
 
 class Terreno
 {
@@ -8,6 +9,7 @@ class Terreno
     // evitar valores negativos
     unsigned int sementeInicial;
     unsigned int semente;
+    int altMinimo, altMaximo;
 
     void alocarEspaco(int alt, int larg)
     {
@@ -171,8 +173,8 @@ class Terreno
     }
 
 public:
-    Terreno(int exp = 0, int seed = 1)
-        : expoente(exp), sementeInicial(seed), semente(seed)
+    Terreno(int exp = 0, int seed = 1, int min = 0, int max = 100)
+        : expoente(exp), sementeInicial(seed), semente(seed), altMinimo(min), altMaximo(max)
     {
         altura = potencia(expoente);
         largura = potencia(expoente);
@@ -207,6 +209,16 @@ public:
         return sementeInicial;
     }
 
+    int obterAltMinimo()
+    {
+        return altMinimo;
+    }
+
+    int obterAltMaximo()
+    {
+        return altMaximo;
+    }
+
     int &operator()(int lin, int col)
     {
         if ((col >= largura || lin >= altura) || (col < 0 || lin < 0))
@@ -218,6 +230,13 @@ public:
         return mapa[lin][col];
     }
 
+    int aleatorio()
+    {
+        int intervalo = (altMaximo - altMinimo) + 1;
+        int valor = gerarNumero();
+        return altMinimo + (valor % intervalo);
+    }
+
     int aleatorio(int minimo, int maximo)
     {
         if (maximo < minimo)
@@ -226,39 +245,38 @@ public:
             minimo = maximo;
             maximo = temp;
         }
-
+        int intervalo = (maximo - minimo) + 1;
         int valor = gerarNumero();
-        int intervalo = (maximo - minimo) + 1; // sem o 1 nunca geraria o valor maximo
         return minimo + (valor % intervalo);
     }
 
-    void gerarMapa(int minimo, int maximo)
+    void gerarMapa()
     {
         // canto superior esquerdo
-        mapa[0][0] = aleatorio(minimo, maximo);
+        mapa[0][0] = aleatorio();
         // canto superior direito
-        mapa[0][largura - 1] = aleatorio(minimo, maximo);
+        mapa[0][largura - 1] = aleatorio();
         // canto inferior esquerdo
-        mapa[altura - 1][0] = aleatorio(minimo, maximo);
+        mapa[altura - 1][0] = aleatorio();
         // canto inferior direito
-        mapa[altura - 1][largura - 1] = aleatorio(minimo, maximo);
+        mapa[altura - 1][largura - 1] = aleatorio();
         // centro da matriz
-        mapa[altura / 2][largura / 2] = aleatorio(minimo, maximo);
+        mapa[altura / 2][largura / 2] = aleatorio();
 
         int h = (largura - 1) / 2;
 
         // meios dos lados
-        mapa[h][0] = aleatorio(minimo, maximo);
-        mapa[0][h] = aleatorio(minimo, maximo);
-        mapa[h][largura - 1] = aleatorio(minimo, maximo);
-        mapa[largura - 1][h] = aleatorio(minimo, maximo);
+        mapa[h][0] = aleatorio();
+        mapa[0][h] = aleatorio();
+        mapa[h][largura - 1] = aleatorio();
+        mapa[largura - 1][h] = aleatorio();
 
-        int menor = minimo;
-        int maior = maximo;
-        if (maximo < minimo)
+        int menor = altMinimo;
+        int maior = altMaximo;
+        if (altMaximo < altMinimo)
         {
-            menor = maximo;
-            maior = minimo;
+            menor = altMaximo;
+            maior = altMinimo;
         }
 
         int distInicial = (maior - menor) / 2;
@@ -273,10 +291,10 @@ public:
         {
             for (int coluna = 0; coluna < largura; coluna++)
             {
-                if (mapa[linha][coluna] < minimo)
-                    mapa[linha][coluna] = minimo;
-                if (mapa[linha][coluna] > maximo)
-                    mapa[linha][coluna] = maximo;
+                if (mapa[linha][coluna] < altMinimo)
+                    mapa[linha][coluna] = altMinimo;
+                if (mapa[linha][coluna] > altMaximo)
+                    mapa[linha][coluna] = altMaximo;
             }
         }
     }
@@ -331,8 +349,7 @@ public:
         file >> sementeInicial;
         semente = sementeInicial;
 
-        int min, max;
-        file >> min >> max;
+        file >> altMinimo >> altMaximo;
 
         alocarEspaco(altura, largura);
 
@@ -346,5 +363,52 @@ public:
             }
         }
         return true;
+    }
+
+    Imagem carregarTerreno(std::string arquivoPALETA, float fator)
+    {
+        Paleta paleta(arquivoPALETA);
+        int numCores = paleta.obterTamanho();
+        Imagem img(altura, largura);
+
+        int min = obterAltMinimo();
+        int max = obterAltMaximo();
+
+        int sombreados = 0;
+
+        for (int y = 0; y < altura; y++)
+        {
+            for (int x = 0; x < largura; x++)
+            {
+                int alturaAtual = mapa[y][x];
+
+                // Mapear para cor
+                double t = double(alturaAtual - min) / (max - min);
+                int indice = static_cast<int>(t * (numCores - 1));
+                if (indice < 0)
+                    indice = 0;
+                if (indice >= numCores)
+                    indice = numCores - 1;
+
+                Cor cor = paleta.obterCor(indice);
+
+                if (x > 0 && y > 0)
+                {
+                    int alturaNoroeste = mapa[y - 1][x - 1];
+
+                    // aplicar sombra
+                    if (alturaAtual < alturaNoroeste)
+                    {
+                        cor.r = static_cast<unsigned char>(cor.r * fator);
+                        cor.g = static_cast<unsigned char>(cor.g * fator);
+                        cor.b = static_cast<unsigned char>(cor.b * fator);
+                        sombreados++;
+                    }
+                }
+
+                img.pintar(y, x, cor);
+            }
+        }
+        return img;
     }
 };

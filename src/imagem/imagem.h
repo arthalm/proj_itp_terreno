@@ -4,19 +4,26 @@
 #include <iostream>
 #include "../paleta/paleta.h"
 
-using Pixel = Cor;
-
 class Imagem
 {
+    using Pixel = Cor;
     int altura, largura;
     Pixel **pixels;
 
     void alocarEspaco(int alt, int larg)
     {
-        pixels = new Pixel *[alt];
-        for (int i = 0; i < alt; i++)
+        limpar();
+        altura = alt;
+        largura = larg;
+        
+        pixels = new Pixel *[altura];
+        for (int i = 0; i < altura; i++)
         {
-            pixels[i] = new Pixel[larg];
+            pixels[i] = new Pixel[largura];
+            for (int j = 0; j < largura; j++) 
+            {
+                pixels[i][j] = Pixel{0, 0, 0};
+            }
         }
     }
 
@@ -31,19 +38,16 @@ class Imagem
         }
         delete[] pixels;
         pixels = nullptr;
+        largura = 0;
+        altura = 0;
     }
 
 public:
-    // construtor - CORRIGIDO: parâmetros na ordem correta (altura, largura)
-    Imagem(int alt = 0, int larg = 0) : altura(alt), largura(larg)
+    Imagem(int alt = 0, int larg = 0) :altura(alt), largura(larg), pixels(nullptr)
     {
-        alocarEspaco(altura, largura);
-        for (int linha = 0; linha < altura; linha++)
+        if (larg > 0 && alt > 0)
         {
-            for (int coluna = 0; coluna < largura; coluna++)
-            {
-                pixels[linha][coluna] = {0, 0, 0};
-            }
+            alocarEspaco(alt, larg);
         }
     }
 
@@ -54,12 +58,12 @@ public:
 
     int obterLargura()
     {
-        return largura; // CORRIGIDO: retorna largura, não altura
+        return largura;
     }
 
     int obterAltura()
     {
-        return altura; // CORRIGIDO: retorna altura, não largura
+        return altura;
     }
 
     Pixel &operator()(int linha, int coluna)
@@ -68,15 +72,41 @@ public:
         {
             std::cerr << "Erro! Posição de pixel inválida.\n";
         }
-        return pixels[linha][coluna]; // CORRIGIDO: [linha][coluna]
+        return pixels[linha][coluna];
+    }
+
+    bool pintar(int x, int y, Cor cor)
+    {
+        if (pixels == nullptr)
+        {
+            return false;
+        }
+        if (x < 0 || x >= largura || y < 0 || y >= altura)
+        {
+            return false;
+        }
+        pixels[y][x] = cor;
+        return true;
+    }
+
+    Cor PegarCor(int x, int y)
+    {
+        Cor preto = {0, 0, 0};
+        if (pixels == nullptr)
+        {
+            return preto;
+        }
+        if (x < 0 || x >= largura || y < 0 || y >= altura)
+        {
+            return preto;
+        }
+        return pixels[y][x];
     }
 
     bool lerPPM(std::string arquivo)
     {
-        // ler arquivo
         std::ifstream file(arquivo);
 
-        // vê se o arquivo está fechado
         if (file.is_open() == false)
         {
             return false;
@@ -93,14 +123,13 @@ public:
 
         alocarEspaco(altura, largura);
 
-        // CORRIGIDO: loop com nomes consistentes
         for (int linha = 0; linha < altura; linha++)
         {
             for (int coluna = 0; coluna < largura; coluna++)
             {
                 int R, G, B;
                 file >> R >> G >> B;
-                pixels[linha][coluna] = Pixel{ // CORRIGIDO: [linha][coluna]
+                pixels[linha][coluna] = Pixel{
                     static_cast<unsigned char>(R),
                     static_cast<unsigned char>(G),
                     static_cast<unsigned char>(B)};
@@ -112,40 +141,35 @@ public:
 
     bool salvarPPM(std::string arquivo)
     {
-        // criar e ler arquivo
         std::ofstream file(arquivo);
 
         if (file.is_open() == false)
         {
+            std::cerr << "Erro: nao foi possivel abrir " << arquivo << std::endl;
             return false;
         }
 
-        std::string formato = "P3", maxIntensidade = "255";
-        // CORRIGIDO: usar nomes corretos
-        int alt = altura, larg = largura;
+        file << "P3" << std::endl;
+        file << largura << " " << altura << std::endl;
+        file << "255" << std::endl;
 
-        file << formato << std::endl;
-        file << larg << " " << alt << std::endl; // PPM espera largura primeiro
-
-        file << maxIntensidade << std::endl;
-
-        // CORRIGIDO: loop com nomes consistentes
         for (int linha = 0; linha < altura; linha++)
         {
             for (int coluna = 0; coluna < largura; coluna++)
             {
-                int Re, Gr, Bl;
-                Re = pixels[linha][coluna].r; // CORRIGIDO: [linha][coluna]
-                Gr = pixels[linha][coluna].g;
-                Bl = pixels[linha][coluna].b;
-
-                file << Re << " " << Gr << " " << Bl;
-                if (coluna < largura - 1) {
+                file << static_cast<int>(pixels[linha][coluna].r) << " "
+                     << static_cast<int>(pixels[linha][coluna].g) << " "
+                     << static_cast<int>(pixels[linha][coluna].b);
+                
+                if (coluna == largura - 1)
+                    file << std::endl;
+                else
                     file << " ";
-                }
             }
             file << std::endl;
         }
+
+        file.close();
         return true;
     }
 };
