@@ -5,6 +5,7 @@ class Terreno
 {
     int expoente, profundidade, largura, **mapa;
     // evitar valores negativos
+    unsigned int sementeInicial;
     unsigned int semente;
 
     void alocarEspaco(int prf, int larg)
@@ -170,7 +171,7 @@ class Terreno
 
 public:
     Terreno(int exp = 0, int seed = 1)
-        : expoente(exp), semente(seed)
+        : expoente(exp), sementeInicial(seed), semente(seed)
     {
         profundidade = potencia(expoente);
         largura = potencia(expoente);
@@ -202,7 +203,7 @@ public:
 
     int obterSemente()
     {
-        return semente;
+        return sementeInicial;
     }
 
     int &operator()(int prf, int larg)
@@ -293,7 +294,7 @@ public:
 
         file << prf << " " << larg << std::endl;
 
-        int seed = semente;
+        int seed = sementeInicial;
         file << seed << std::endl;
 
         file << min << " " << max << std::endl;
@@ -326,7 +327,8 @@ public:
 
         file >> profundidade >> largura;
 
-        file >> semente;
+        file >> sementeInicial;
+        semente = sementeInicial;
 
         int min, max;
         file >> min >> max;

@@ -77,32 +77,6 @@ TEST_CASE("Testa gerarMapa com numero negativo")
     CHECK(terreno(2, 2) <= 10);
 }
 
-TEST_CASE("Testa visualização do terreno")
-{
-    Terreno terreno(5, 42);  // mude onde está o 5 para ter diferentes tamanhos de matriz
-    terreno.gerarMapa(0, 300); // alt minima e maxima
-
-    SUBCASE("Terreno 33x33")
-    {
-        std::cout << "\nTerreno 33x33 gerado:\n";
-        for (int i = 0; i < terreno.obterProfundidade(); i++)
-        {
-            for (int j = 0; j < terreno.obterLargura(); j++)
-            {
-                std::cout << terreno(i, j) << "\t";
-            }
-            std::cout << "\n";
-        }
-        std::cout << "\n";
-    }
-
-    // Verifica se os cantos foram realmente inicializados primeiro (teste qualquer)
-    CHECK(terreno(0, 0) != 0);
-    CHECK(terreno(0, 4) != 0);
-    CHECK(terreno(4, 0) != 0);
-    CHECK(terreno(4, 4) != 0);
-}
-
 TEST_CASE("Testa a salvamento do terreno em formato R16 (HeightMap)")
 {
     Terreno terreno(1, 42);
@@ -181,24 +155,10 @@ TEST_CASE("Testa a leitura de terreno em formato R16 (HeightMap)")
 TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 5")
 {
     Terreno terreno(5, 42);     // 2^5 + 1 = 33
-    terreno.gerarMapa(0, 300);    // valores aleatórios entre 0 e 500
+    terreno.gerarMapa(0, 300);    // valores aleatórios entre 0 e 300
 
     CHECK(terreno.obterLargura() == 33);
     CHECK(terreno.obterProfundidade() == 33);
-
-    SUBCASE("Visualização do terreno 33x33")
-    {
-        std::cout << "\nTerreno 33x33 gerado:\n";
-        for (int i = 0; i < terreno.obterProfundidade(); i++)
-        {
-            for (int j = 0; j < terreno.obterLargura(); j++)
-            {
-                std::cout << terreno(i, j) << " ";
-            }
-            std::cout << "\n";
-        }
-        std::cout << "\n";
-    }
 
     // Testa se canto superior-esquerdo e inferior-direito estão dentro do intervalo
     CHECK(terreno(0, 0) >= 0);
@@ -208,7 +168,7 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 5
     CHECK(terreno(32, 32) <= 300);
 
     // ------------------------------------------------------------
-    // TESTE DE SALVAMENTO EM PPM
+    // TESTE DE SALVAMENTO EM R16
     // ------------------------------------------------------------
 
     bool sucesso = terreno.salvarHeightMap("terreno_33x33.r16", 0, 300);
@@ -225,7 +185,7 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 5
     CHECK(linha == "33 33");   // largura e profundidade
 
     std::getline(arquivo, linha);
-    CHECK(linha == "9950");    // semente usada
+    CHECK(linha == "42");    // semente usada
 
     std::getline(arquivo, linha);
     CHECK(linha == "0 300");   // min e max gravados
@@ -244,20 +204,6 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 8
 
     CHECK(terreno.obterLargura() == 257);
     CHECK(terreno.obterProfundidade() == 257);
-
-    SUBCASE("Visualização do terreno 257x257")
-    {
-        std::cout << "\nTerreno 257x257 gerado:\n";
-        for (int i = 0; i < terreno.obterProfundidade(); i++)
-        {
-            for (int j = 0; j < terreno.obterLargura(); j++)
-            {
-                std::cout << terreno(i, j) << " ";
-            }
-            std::cout << "\n";
-        }
-        std::cout << "\n";
-    }
 
     // Testes básicos: valores nos cantos
     CHECK(terreno(0, 0) >= 0);
@@ -299,8 +245,3 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 8
 
     arquivo.close();
 }
-
-
-// Você precisará criar testes adicionais para cobrir os métodos privados da classe.
-// Por exemplo, você pode criar testes para os métodos das etapas Square e Diamond
-// Você pode torná-los públicos temporariamente para fins de teste ou usar técnicas como "friend testing".
