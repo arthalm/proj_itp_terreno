@@ -3,7 +3,7 @@
 #include "imagem.h"
 
 TEST_CASE("Testa a criação de uma imagem com largura e altura específicas") {
-    Imagem img(100, 50);
+    Imagem img(50, 100);
     CHECK(img.obterLargura() == 100);
     CHECK(img.obterAltura() == 50);
 }
@@ -19,7 +19,6 @@ TEST_CASE("Testa a modificação e acesso aos pixels da imagem") {
     CHECK(pixel.b == 0);
 }
 
-
 TEST_CASE("Testa a leitura de uma imagem em formato PPM") {
     Imagem img;
     bool sucesso = img.lerPPM("imagem.ppm");
@@ -32,12 +31,12 @@ TEST_CASE("Testa a leitura de uma imagem em formato PPM") {
     CHECK(p1.g == 0);
     CHECK(p1.b == 0);
 
-    const Pixel& p2 = img(1, 0); // (x,y) = (1,0)
+    const Pixel& p2 = img(0, 1);
     CHECK(p2.r == 0);
     CHECK(p2.g == 255);
     CHECK(p2.b == 0);
 
-    const Pixel& p3 = img(0, 1); // (x,y) = (0,1)
+    const Pixel& p3 = img(1, 0);
     CHECK(p3.r == 255);
     CHECK(p3.g == 255);
     CHECK(p3.b == 0);
@@ -48,11 +47,13 @@ TEST_CASE("Testa a leitura de uma imagem em formato PPM") {
     CHECK(p4.b == 255);
 }
 
-TEST_CASE("Testa a salvamento da imagem em formato PPM") {
+TEST_CASE("Testa o salvamento da imagem em formato PPM") {
     Imagem img(2, 2);
     img(0, 0) = {255, 0, 0};   // vermelho
-    img(1, 0) = {0, 255, 0};   // verde
-    img(0, 1) = {0, 0, 255};   // azul
+    img(0, 1) = {0, 255, 0};   // verde
+    
+    // Linha 1: azul, amarelo
+    img(1, 0) = {0, 0, 255};   // azul
     img(1, 1) = {255, 255, 0}; // amarelo
 
     bool sucesso = img.salvarPPM("teste.ppm");
@@ -71,13 +72,9 @@ TEST_CASE("Testa a salvamento da imagem em formato PPM") {
     CHECK(conteudo == "255");
 
     std::getline(arquivo, conteudo);
-    CHECK(conteudo == "255 0 0");
+    CHECK(conteudo == "255 0 0 0 255 0");
     std::getline(arquivo, conteudo);
-    CHECK(conteudo == "0 255 0");
-    std::getline(arquivo, conteudo);
-    CHECK(conteudo == "0 0 255");
-    std::getline(arquivo, conteudo);
-    CHECK(conteudo == "255 255 0");
+    CHECK(conteudo == "0 0 255 255 255 0");
 
     arquivo.close();
 }

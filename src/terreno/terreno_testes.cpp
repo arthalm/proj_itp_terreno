@@ -7,14 +7,14 @@ TEST_CASE("Testa a criação de um terreno de uma única célula")
 {
     Terreno terreno(0); // 2^0 + 1 = 1
     CHECK(terreno.obterLargura() == 1);
-    CHECK(terreno.obterProfundidade() == 1);
+    CHECK(terreno.obterAltura() == 1);
 }
 
 TEST_CASE("Testa a geração aleatória de altitudes")
 {
     Terreno terreno(2);
     CHECK(terreno.obterLargura() == 5);
-    CHECK(terreno.obterProfundidade() == 5);
+    CHECK(terreno.obterAltura() == 5);
 }
 
 TEST_CASE("Testa a modificação e acesso as altitudes da matriz")
@@ -120,7 +120,7 @@ TEST_CASE("Testa a leitura de terreno em formato R16 (HeightMap)")
     Terreno terreno;
     bool sucesso = terreno.lerHeightMap("teste.r16");
     CHECK(sucesso);
-    CHECK(terreno.obterProfundidade() == 3);
+    CHECK(terreno.obterAltura() == 3);
     CHECK(terreno.obterLargura() == 3);
     CHECK(terreno.obterSemente() == 42);
 
@@ -158,7 +158,7 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 5
     terreno.gerarMapa(0, 300);    // valores aleatórios entre 0 e 300
 
     CHECK(terreno.obterLargura() == 33);
-    CHECK(terreno.obterProfundidade() == 33);
+    CHECK(terreno.obterAltura() == 33);
 
     // Testa se canto superior-esquerdo e inferior-direito estão dentro do intervalo
     CHECK(terreno(0, 0) >= 0);
@@ -203,7 +203,7 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 8
     terreno.gerarMapa(0, 300);
 
     CHECK(terreno.obterLargura() == 257);
-    CHECK(terreno.obterProfundidade() == 257);
+    CHECK(terreno.obterAltura() == 257);
 
     // Testes básicos: valores nos cantos
     CHECK(terreno(0, 0) >= 0);

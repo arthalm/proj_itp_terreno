@@ -1,17 +1,18 @@
 #include <iostream>
 #include <cmath>
+#include <fstream>
 
 class Terreno
 {
-    int expoente, profundidade, largura, **mapa;
+    int expoente, altura, largura, **mapa;
     // evitar valores negativos
     unsigned int sementeInicial;
     unsigned int semente;
 
-    void alocarEspaco(int prf, int larg)
+    void alocarEspaco(int alt, int larg)
     {
-        mapa = new int *[prf];
-        for (int i = 0; i < prf; i++)
+        mapa = new int *[alt];
+        for (int i = 0; i < alt; i++)
         {
             mapa[i] = new int[larg];
         }
@@ -21,7 +22,7 @@ class Terreno
     {
         if (mapa == nullptr)
             return;
-        for (int i = 0; i < profundidade; i++)
+        for (int i = 0; i < altura; i++)
         {
             delete[] mapa[i];
         }
@@ -48,38 +49,38 @@ class Terreno
         return semente;
     }
 
-    void diamond(int x, int y, int alcance, int variacao)
+    void diamond(int linha, int coluna, int alcance, int variacao)
     {
         int cont = 0;
         float media = 0.0;
 
-        if (x - alcance >= 0)
+        if (linha - alcance >= 0)
         {
-            media += mapa[x - alcance][y];
+            media += mapa[linha - alcance][coluna];
             cont++;
         }
 
-        if (x + alcance < profundidade)
+        if (linha + alcance < altura)
         {
-            media += mapa[x + alcance][y];
+            media += mapa[linha + alcance][coluna];
             cont++;
         }
 
-        if (y - alcance >= 0)
+        if (coluna - alcance >= 0)
         {
-            media += mapa[x][y - alcance];
+            media += mapa[linha][coluna - alcance];
             cont++;
         }
 
-        if (y + alcance < largura)
+        if (coluna + alcance < largura)
         {
-            media += mapa[x][y + alcance];
+            media += mapa[linha][coluna + alcance];
             cont++;
         }
 
         if (cont == 0)
         {
-            mapa[x][y] = aleatorio(-variacao, variacao);
+            mapa[linha][coluna] = aleatorio(-variacao, variacao);
             return;
         }
 
@@ -88,42 +89,42 @@ class Terreno
             media /= cont;
             int ruido = aleatorio(-variacao, variacao);
             int novoValor = (int)(media + ruido);
-            mapa[x][y] = novoValor;
+            mapa[linha][coluna] = novoValor;
         }
     }
 
-    void square(int x, int y, int alcance, int variacao)
+    void square(int linha, int coluna, int alcance, int variacao)
     {
         int cont = 0;
         float media = 0.0;
 
-        if (x - alcance >= 0 && y - alcance >= 0)
+        if (linha - alcance >= 0 && coluna - alcance >= 0)
         {
-            media += mapa[x - alcance][y - alcance];
+            media += mapa[linha - alcance][coluna - alcance];
             cont++;
         }
 
-        if (x - alcance >= 0 && y + alcance < largura)
+        if (linha - alcance >= 0 && coluna + alcance < largura)
         {
-            media += mapa[x - alcance][y + alcance];
+            media += mapa[linha - alcance][coluna + alcance];
             cont++;
         }
 
-        if (x + alcance < profundidade && y - alcance >= 0)
+        if (linha + alcance < altura && coluna - alcance >= 0)
         {
-            media += mapa[x + alcance][y - alcance];
+            media += mapa[linha + alcance][coluna - alcance];
             cont++;
         }
 
-        if (x + alcance < profundidade && y + alcance < largura)
+        if (linha + alcance < altura && coluna + alcance < largura)
         {
-            media += mapa[x + alcance][y + alcance];
+            media += mapa[linha + alcance][coluna + alcance];
             cont++;
         }
 
         if (cont == 0)
         {
-            mapa[x][y] = aleatorio(-variacao, variacao);
+            mapa[linha][coluna] = aleatorio(-variacao, variacao);
             return;
         }
 
@@ -132,7 +133,7 @@ class Terreno
             media /= cont;
             int ruido = aleatorio(-variacao, variacao);
             int novoValor = (int)(media + ruido);
-            mapa[x][y] = novoValor;
+            mapa[linha][coluna] = novoValor;
         }
     }
 
@@ -143,19 +144,19 @@ class Terreno
         while (metade >= 1)
         {
 
-            for (int x = metade; x < tamanho; x += (metade * 2))
+            for (int linha = metade; linha < tamanho; linha += (metade * 2))
             {
-                for (int y = metade; y < tamanho; y += (metade * 2))
+                for (int coluna = metade; coluna < tamanho; coluna += (metade * 2))
                 {
-                    square(x, y, metade, variacao);
+                    square(linha, coluna, metade, variacao);
                 }
             }
 
-            for (int x = 0; x < tamanho; x += metade)
+            for (int linha = 0; linha < tamanho; linha += metade)
             {
-                for (int y = ((x / metade) % 2 == 0 ? metade : 0); y < tamanho; y += (metade * 2))
+                for (int coluna = ((linha / metade) % 2 == 0 ? metade : 0); coluna < tamanho; coluna += (metade * 2))
                 {
-                    diamond(x, y, metade, variacao);
+                    diamond(linha, coluna, metade, variacao);
                 }
             }
 
@@ -173,11 +174,11 @@ public:
     Terreno(int exp = 0, int seed = 1)
         : expoente(exp), sementeInicial(seed), semente(seed)
     {
-        profundidade = potencia(expoente);
+        altura = potencia(expoente);
         largura = potencia(expoente);
 
-        alocarEspaco(profundidade, largura);
-        for (int i = 0; i < profundidade; i++)
+        alocarEspaco(altura, largura);
+        for (int i = 0; i < altura; i++)
         {
             for (int j = 0; j < largura; j++)
             {
@@ -196,9 +197,9 @@ public:
         return largura;
     }
 
-    int obterProfundidade()
+    int obterAltura()
     {
-        return profundidade;
+        return altura;
     }
 
     int obterSemente()
@@ -206,15 +207,15 @@ public:
         return sementeInicial;
     }
 
-    int &operator()(int prf, int larg)
+    int &operator()(int lin, int col)
     {
-        if ((larg >= largura || prf >= profundidade) || (larg < 0 || prf < 0))
+        if ((col >= largura || lin >= altura) || (col < 0 || lin < 0))
         {
             std::cerr << "Erro! Posição inválida.\n";
             static int erro = 0;
             return erro;
         }
-        return mapa[prf][larg];
+        return mapa[lin][col];
     }
 
     int aleatorio(int minimo, int maximo)
@@ -238,11 +239,11 @@ public:
         // canto superior direito
         mapa[0][largura - 1] = aleatorio(minimo, maximo);
         // canto inferior esquerdo
-        mapa[profundidade - 1][0] = aleatorio(minimo, maximo);
+        mapa[altura - 1][0] = aleatorio(minimo, maximo);
         // canto inferior direito
-        mapa[profundidade - 1][largura - 1] = aleatorio(minimo, maximo);
+        mapa[altura - 1][largura - 1] = aleatorio(minimo, maximo);
         // centro da matriz
-        mapa[profundidade / 2][largura / 2] = aleatorio(minimo, maximo);
+        mapa[altura / 2][largura / 2] = aleatorio(minimo, maximo);
 
         int h = (largura - 1) / 2;
 
@@ -268,14 +269,14 @@ public:
 
         diamondSquare(largura, distInicial);
 
-        for (int x = 0; x < profundidade; x++)
+        for (int linha = 0; linha < altura; linha++)
         {
-            for (int y = 0; y < largura; y++)
+            for (int coluna = 0; coluna < largura; coluna++)
             {
-                if (mapa[x][y] < minimo)
-                    mapa[x][y] = minimo;
-                if (mapa[x][y] > maximo)
-                    mapa[x][y] = maximo;
+                if (mapa[linha][coluna] < minimo)
+                    mapa[linha][coluna] = minimo;
+                if (mapa[linha][coluna] > maximo)
+                    mapa[linha][coluna] = maximo;
             }
         }
     }
@@ -290,21 +291,21 @@ public:
             return false;
         }
 
-        int prf = profundidade, larg = largura;
+        int alt = altura, larg = largura;
 
-        file << prf << " " << larg << std::endl;
+        file << alt << " " << larg << std::endl;
 
         int seed = sementeInicial;
         file << seed << std::endl;
 
         file << min << " " << max << std::endl;
 
-        for (int x = 0; x < profundidade; x++)
+        for (int linha = 0; linha < altura; linha++)
         {
-            for (int y = 0; y < largura; y++)
+            for (int coluna = 0; coluna < largura; coluna++)
             {
-                file << mapa[x][y];
-                if (y < largura - 1)
+                file << mapa[linha][coluna];
+                if (coluna < largura - 1)
                 {
                     file << " ";
                 }
@@ -325,7 +326,7 @@ public:
             return false;
         }
 
-        file >> profundidade >> largura;
+        file >> altura >> largura;
 
         file >> sementeInicial;
         semente = sementeInicial;
@@ -333,15 +334,15 @@ public:
         int min, max;
         file >> min >> max;
 
-        alocarEspaco(profundidade, largura);
+        alocarEspaco(altura, largura);
 
-        for (int x = 0; x < profundidade; x++)
+        for (int linha = 0; linha < altura; linha++)
         {
-            for (int y = 0; y < largura; y++)
+            for (int coluna = 0; coluna < largura; coluna++)
             {
                 int altitude;
                 file >> altitude;
-                mapa[x][y] = altitude;
+                mapa[linha][coluna] = altitude;
             }
         }
         return true;

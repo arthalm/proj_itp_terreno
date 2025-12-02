@@ -8,38 +8,41 @@ using Pixel = Cor;
 
 class Imagem
 {
-    int largura, altura;
+    int altura, largura;
     Pixel **pixels;
 
-    void alocarEspaco(int larg, int alt)
+    void alocarEspaco(int alt, int larg)
     {
-        pixels = new Pixel *[larg];
-        for (int i = 0; i < larg; i++)
+        pixels = new Pixel *[alt];
+        for (int i = 0; i < alt; i++)
         {
-            pixels[i] = new Pixel[alt];
+            pixels[i] = new Pixel[larg];
         }
     }
 
     // lerPPM tambem vai usar isso do destrutor
     void limpar()
     {
-        for (int i = 0; i < largura; i++)
+        if (pixels == nullptr)
+            return;
+        for (int i = 0; i < altura; i++)
         {
             delete[] pixels[i];
         }
         delete[] pixels;
+        pixels = nullptr;
     }
 
 public:
-    // construtor
-    Imagem(int larg = 0, int alt = 0) : largura(larg), altura(alt)
+    // construtor - CORRIGIDO: parâmetros na ordem correta (altura, largura)
+    Imagem(int alt = 0, int larg = 0) : altura(alt), largura(larg)
     {
-        alocarEspaco(largura, altura);
-        for (int i = 0; i < largura; i++)
+        alocarEspaco(altura, largura);
+        for (int linha = 0; linha < altura; linha++)
         {
-            for (int j = 0; j < altura; j++)
+            for (int coluna = 0; coluna < largura; coluna++)
             {
-                pixels[i][j] = {0, 0, 0};
+                pixels[linha][coluna] = {0, 0, 0};
             }
         }
     }
@@ -51,21 +54,21 @@ public:
 
     int obterLargura()
     {
-        return largura;
+        return largura; // CORRIGIDO: retorna largura, não altura
     }
 
     int obterAltura()
     {
-        return altura;
+        return altura; // CORRIGIDO: retorna altura, não largura
     }
 
-    Pixel &operator()(int lar, int alt)
+    Pixel &operator()(int linha, int coluna)
     {
-        if ((lar >= largura || alt >= altura) || (lar < 0 || alt < 0))
+        if ((coluna >= largura || linha >= altura) || (coluna < 0 || linha < 0))
         {
             std::cerr << "Erro! Posição de pixel inválida.\n";
         }
-        return pixels[lar][alt];
+        return pixels[linha][coluna]; // CORRIGIDO: [linha][coluna]
     }
 
     bool lerPPM(std::string arquivo)
@@ -80,27 +83,24 @@ public:
         }
 
         std::string formato;
-        int larg, alt, maxIntensidade;
+        int largura_arquivo, altura_arquivo;
+        int maxIntensidade;
 
-        file >> formato >> larg >> alt >> maxIntensidade;
+        file >> formato >> largura_arquivo >> altura_arquivo >> maxIntensidade;
 
-        // o que tem no PPM vai substituir a imagem atual
-        // precisa limpar a imagem antiga agr
-        // ja que o destrutor só limparia no final do codigo
-        limpar();
-        largura = larg;
-        altura = alt;
-        pixels = nullptr;
+        largura = largura_arquivo;
+        altura = altura_arquivo;
 
-        alocarEspaco(largura, altura);
+        alocarEspaco(altura, largura);
 
-        for (int y = 0; y < alt; y++)
+        // CORRIGIDO: loop com nomes consistentes
+        for (int linha = 0; linha < altura; linha++)
         {
-            for (int x = 0; x < larg; x++)
+            for (int coluna = 0; coluna < largura; coluna++)
             {
                 int R, G, B;
                 file >> R >> G >> B;
-                pixels[x][y] = Pixel{
+                pixels[linha][coluna] = Pixel{ // CORRIGIDO: [linha][coluna]
                     static_cast<unsigned char>(R),
                     static_cast<unsigned char>(G),
                     static_cast<unsigned char>(B)};
@@ -121,26 +121,30 @@ public:
         }
 
         std::string formato = "P3", maxIntensidade = "255";
-        int larg = largura, alt = altura;
+        // CORRIGIDO: usar nomes corretos
+        int alt = altura, larg = largura;
 
         file << formato << std::endl;
-        file << larg << " " << alt << std::endl;
-
-        // não precisa aumentar tamanho nessa parte
+        file << larg << " " << alt << std::endl; // PPM espera largura primeiro
 
         file << maxIntensidade << std::endl;
 
-        for (int y = 0; y < larg; y++)
+        // CORRIGIDO: loop com nomes consistentes
+        for (int linha = 0; linha < altura; linha++)
         {
-            for (int x = 0; x < alt; x++)
+            for (int coluna = 0; coluna < largura; coluna++)
             {
                 int Re, Gr, Bl;
-                Re = pixels[x][y].r;
-                Gr = pixels[x][y].g;
-                Bl = pixels[x][y].b;
+                Re = pixels[linha][coluna].r; // CORRIGIDO: [linha][coluna]
+                Gr = pixels[linha][coluna].g;
+                Bl = pixels[linha][coluna].b;
 
-                file << Re << " " << Gr << " " << Bl << std::endl;
+                file << Re << " " << Gr << " " << Bl;
+                if (coluna < largura - 1) {
+                    file << " ";
+                }
             }
+            file << std::endl;
         }
         return true;
     }
