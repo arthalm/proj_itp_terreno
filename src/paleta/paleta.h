@@ -15,7 +15,7 @@ class Paleta
 
     void aumentarCapacidade()
     {
-        capacidade += 1;
+        capacidade *= 2;
         Cor *novo = new Cor[capacidade];
         for (int i = 0; i < tamanho; i++)
         {
