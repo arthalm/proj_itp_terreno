@@ -364,4 +364,4 @@ public:
         }
         return true;
     }
-}
+};
