@@ -260,16 +260,6 @@ public:
         mapa[altura - 1][0] = aleatorio();
         // canto inferior direito
         mapa[altura - 1][largura - 1] = aleatorio();
-        // centro da matriz
-        mapa[altura / 2][largura / 2] = aleatorio();
-
-        int h = (largura - 1) / 2;
-
-        // meios dos lados
-        mapa[h][0] = aleatorio();
-        mapa[0][h] = aleatorio();
-        mapa[h][largura - 1] = aleatorio();
-        mapa[largura - 1][h] = aleatorio();
 
         int menor = altMinimo;
         int maior = altMaximo;
@@ -299,7 +289,7 @@ public:
         }
     }
 
-    bool salvarHeightMap(std::string arquivo, int min, int max)
+    bool salvarHeightMap(std::string arquivo)
     {
         // criar e ler arquivo
         std::ofstream file(arquivo);
@@ -310,12 +300,12 @@ public:
         }
 
         int alt = altura, larg = largura;
-
         file << alt << " " << larg << std::endl;
 
         int seed = sementeInicial;
         file << seed << std::endl;
 
+        int min = altMinimo, max = altMaximo;
         file << min << " " << max << std::endl;
 
         for (int linha = 0; linha < altura; linha++)

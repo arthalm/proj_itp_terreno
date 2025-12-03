@@ -39,9 +39,9 @@ TEST_CASE("Testa a geração de números aleatorios dentro do intervalo")
 
 TEST_CASE("Testa gerarMapa nos quatro cantos para terreno 2x2")
 {
-    Terreno terreno(1, 42); // 2^1 + 1 = 3
+    Terreno terreno(1, 42, 0, 100); // 2^1 + 1 = 3
 
-    terreno.gerarMapa(0, 100);
+    terreno.gerarMapa();
 
     // Verifica se os quatro cantos foram inicializados
     CHECK(terreno(0, 0) >= 0);
@@ -59,9 +59,9 @@ TEST_CASE("Testa gerarMapa nos quatro cantos para terreno 2x2")
 
 TEST_CASE("Testa gerarMapa com numero negativo")
 {
-    Terreno terreno(1, 123);
+    Terreno terreno(1, 123, -10, 10);
 
-    terreno.gerarMapa(-10, 10);
+    terreno.gerarMapa();
 
     // Verifica se os valores estão no intervalo -10 a 10
     CHECK(terreno(0, 0) >= -10);
@@ -79,7 +79,7 @@ TEST_CASE("Testa gerarMapa com numero negativo")
 
 TEST_CASE("Testa a salvamento do terreno em formato R16 (HeightMap)")
 {
-    Terreno terreno(1, 42);
+    Terreno terreno(1, 42, 0, 3);
     terreno(0, 0) = 3;
     terreno(0, 1) = 0;
     terreno(0, 2) = 1;
@@ -90,7 +90,7 @@ TEST_CASE("Testa a salvamento do terreno em formato R16 (HeightMap)")
     terreno(2, 1) = 0;
     terreno(2, 2) = 2;
 
-    bool sucesso = terreno.salvarHeightMap("teste.r16", 0, 3);
+    bool sucesso = terreno.salvarHeightMap("teste.r16");
     CHECK(sucesso);
 
     // Verifica se o arquivo foi criado corretamente
@@ -154,8 +154,8 @@ TEST_CASE("Testa a leitura de terreno em formato R16 (HeightMap)")
 
 TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 5")
 {
-    Terreno terreno(5, 42);     // 2^5 + 1 = 33
-    terreno.gerarMapa(0, 300);    // valores aleatórios entre 0 e 300
+    Terreno terreno(5, 42, 0, 300);     // 2^5 + 1 = 33
+    terreno.gerarMapa();    // valores aleatórios entre 0 e 300
 
     CHECK(terreno.obterLargura() == 33);
     CHECK(terreno.obterAltura() == 33);
@@ -167,11 +167,7 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 5
     CHECK(terreno(32, 32) >= 0);
     CHECK(terreno(32, 32) <= 300);
 
-    // ------------------------------------------------------------
-    // TESTE DE SALVAMENTO EM R16
-    // ------------------------------------------------------------
-
-    bool sucesso = terreno.salvarHeightMap("terreno_33x33.r16", 0, 300);
+    bool sucesso = terreno.salvarHeightMap("terreno_33x33.r16");
     CHECK(sucesso);
 
     // Abre o arquivo salvo
@@ -199,8 +195,8 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 5
 
 TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 8")
 {
-    Terreno terreno(8, 42);   // 2^8 + 1 = 257
-    terreno.gerarMapa(0, 300);
+    Terreno terreno(8, 42, 0, 300);   // 2^8 + 1 = 257
+    terreno.gerarMapa();
 
     CHECK(terreno.obterLargura() == 257);
     CHECK(terreno.obterAltura() == 257);
@@ -212,11 +208,7 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 8
     CHECK(terreno(256, 256) >= 0);
     CHECK(terreno(256, 256) <= 300);
 
-    // ------------------------------------------------------------
-    // TESTE DE SALVAMENTO EM R16
-    // ------------------------------------------------------------
-
-    bool sucesso = terreno.salvarHeightMap("terreno_257x257.r16", 0, 300);
+    bool sucesso = terreno.salvarHeightMap("terreno_257x257.r16");
     CHECK(sucesso);
 
     std::ifstream arquivo("terreno_257x257.r16");
@@ -229,9 +221,6 @@ TEST_CASE("Testa geração, visualização e salvamento de um terreno potencia 8
     CHECK(linha == "257 257");
 
     // Segunda linha: semente final depois de gerar o mapa
-    // Esta semente muda durante o algoritmo, portanto você deve imprimir
-    // o valor real gerado para descobrir qual é.
-    // Por enquanto, apenas testaremos que a linha NÃO está vazia:
     std::getline(arquivo, linha);
     CHECK(linha.size() > 0);
 
