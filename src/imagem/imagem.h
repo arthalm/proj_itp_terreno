@@ -4,43 +4,50 @@
 #include <iostream>
 #include "../paleta/paleta.h"
 
-using Pixel = Cor;
-
 class Imagem
 {
-    int largura, altura;
+    using Pixel = Cor;
+    int altura, largura;
     Pixel **pixels;
 
-    void alocarEspaco(int larg, int alt)
+    void alocarEspaco(int alt, int larg)
     {
-        pixels = new Pixel *[larg];
-        for (int i = 0; i < larg; i++)
+        limpar();
+        altura = alt;
+        largura = larg;
+        
+        pixels = new Pixel *[altura];
+        for (int i = 0; i < altura; i++)
         {
-            pixels[i] = new Pixel[alt];
+            pixels[i] = new Pixel[largura];
+            for (int j = 0; j < largura; j++) 
+            {
+                pixels[i][j] = Pixel{0, 0, 0};
+            }
         }
     }
 
     // lerPPM tambem vai usar isso do destrutor
     void limpar()
     {
-        for (int i = 0; i < largura; i++)
+        if (pixels == nullptr)
+            return;
+        for (int i = 0; i < altura; i++)
         {
             delete[] pixels[i];
         }
         delete[] pixels;
+        pixels = nullptr;
+        largura = 0;
+        altura = 0;
     }
 
 public:
-    // construtor
-    Imagem(int larg = 0, int alt = 0) : largura(larg), altura(alt)
+    Imagem(int alt = 0, int larg = 0) :altura(alt), largura(larg), pixels(nullptr)
     {
-        alocarEspaco(largura, altura);
-        for (int i = 0; i < largura; i++)
+        if (larg > 0 && alt > 0)
         {
-            for (int j = 0; j < altura; j++)
-            {
-                pixels[i][j] = {0, 0, 0};
-            }
+            alocarEspaco(alt, larg);
         }
     }
 
@@ -59,48 +66,70 @@ public:
         return altura;
     }
 
-    Pixel &operator()(int lar, int alt)
+    Pixel &operator()(int linha, int coluna)
     {
-        if ((lar >= largura || alt >= altura) || (lar < 0 || alt < 0))
+        if ((coluna >= largura || linha >= altura) || (coluna < 0 || linha < 0))
         {
             std::cerr << "Erro! Posição de pixel inválida.\n";
         }
-        return pixels[lar][alt];
+        return pixels[linha][coluna];
+    }
+
+    bool pintar(int x, int y, Cor cor)
+    {
+        if (pixels == nullptr)
+        {
+            return false;
+        }
+        if (x < 0 || x >= largura || y < 0 || y >= altura)
+        {
+            return false;
+        }
+        pixels[y][x] = cor;
+        return true;
+    }
+
+    Cor PegarCor(int x, int y)
+    {
+        Cor preto = {0, 0, 0};
+        if (pixels == nullptr)
+        {
+            return preto;
+        }
+        if (x < 0 || x >= largura || y < 0 || y >= altura)
+        {
+            return preto;
+        }
+        return pixels[y][x];
     }
 
     bool lerPPM(std::string arquivo)
     {
-        // ler arquivo
         std::ifstream file(arquivo);
 
-        // vê se o arquivo está fechado
         if (file.is_open() == false)
         {
             return false;
         }
 
         std::string formato;
-        int larg, alt, maxIntensidade;
+        int largura_arquivo, altura_arquivo;
+        int maxIntensidade;
 
-        file >> formato >> larg >> alt >> maxIntensidade;
+        file >> formato >> largura_arquivo >> altura_arquivo >> maxIntensidade;
 
-        // o que tem no PPM vai substituir a imagem atual
-        // precisa limpar a imagem antiga agr
-        // ja que o destrutor só limparia no final do codigo
-        limpar();
-        largura = larg;
-        altura = alt;
-        pixels = nullptr;
+        largura = largura_arquivo;
+        altura = altura_arquivo;
 
-        alocarEspaco(largura, altura);
+        alocarEspaco(altura, largura);
 
-        for (int y = 0; y < alt; y++)
+        for (int linha = 0; linha < altura; linha++)
         {
-            for (int x = 0; x < larg; x++)
+            for (int coluna = 0; coluna < largura; coluna++)
             {
                 int R, G, B;
                 file >> R >> G >> B;
-                pixels[x][y] = Pixel{
+                pixels[linha][coluna] = Pixel{
                     static_cast<unsigned char>(R),
                     static_cast<unsigned char>(G),
                     static_cast<unsigned char>(B)};
@@ -112,36 +141,35 @@ public:
 
     bool salvarPPM(std::string arquivo)
     {
-        // criar e ler arquivo
         std::ofstream file(arquivo);
 
         if (file.is_open() == false)
         {
+            std::cerr << "Erro: nao foi possivel abrir " << arquivo << std::endl;
             return false;
         }
 
-        std::string formato = "P3", maxIntensidade = "255";
-        int larg = largura, alt = altura;
+        file << "P3" << std::endl;
+        file << largura << " " << altura << std::endl;
+        file << "255" << std::endl;
 
-        file << formato << std::endl;
-        file << larg << " " << alt << std::endl;
-
-        // não precisa aumentar tamanho nessa parte
-
-        file << maxIntensidade << std::endl;
-
-        for (int y = 0; y < larg; y++)
+        for (int linha = 0; linha < altura; linha++)
         {
-            for (int x = 0; x < alt; x++)
+            for (int coluna = 0; coluna < largura; coluna++)
             {
-                int Re, Gr, Bl;
-                Re = pixels[x][y].r;
-                Gr = pixels[x][y].g;
-                Bl = pixels[x][y].b;
-
-                file << Re << " " << Gr << " " << Bl << std::endl;
+                file << static_cast<int>(pixels[linha][coluna].r) << " "
+                     << static_cast<int>(pixels[linha][coluna].g) << " "
+                     << static_cast<int>(pixels[linha][coluna].b);
+                
+                if (coluna == largura - 1)
+                    file << std::endl;
+                else
+                    file << " ";
             }
+            file << std::endl;
         }
+
+        file.close();
         return true;
     }
 };

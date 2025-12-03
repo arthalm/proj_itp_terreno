@@ -15,7 +15,7 @@ class Paleta
 
     void aumentarCapacidade()
     {
-        capacidade += 1;
+        capacidade *= 2;
         Cor *novo = new Cor[capacidade];
         for (int i = 0; i < tamanho; i++)
         {
@@ -38,6 +38,11 @@ public:
         cores = new Cor[capacidade];
 
         std::ifstream file(arquivo); // recebe um arquivo por referencia e armazena em file
+
+        if (!file.is_open()) {
+            std::cerr << "Erro: nao foi possivel abrir " << arquivo << std::endl;
+            return;
+        }
 
         std::string linha;
         while (std::getline(file, linha))
@@ -91,8 +96,8 @@ public:
     {
         if (n >= tamanho || n < 0)
         {
-            Cor corInvalida{0, 0, 0};
-            return corInvalida;
+            std::cerr << "Erro: indice " << n << " fora dos limites (0-" << tamanho-1 << ")\n";
+            return Cor{0, 0, 0};
         }
         return cores[n];
     }
