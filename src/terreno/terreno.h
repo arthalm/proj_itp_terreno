@@ -164,11 +164,62 @@ class Terreno
 
             metade /= 2;
 
-            variacao *= 0.5;
+            variacao *= 0.6;
             if (variacao < 1)
             {
                 variacao = 1;
             }
+        }
+    }
+
+    void suavizarMapa(int repeticoes)
+    {
+        for (int r = 0; r < repeticoes; r++)
+        {
+            // ALOCAÇÃO MANUAL do mapa temporário
+            int **tempMapa = new int *[altura];
+            for (int i = 0; i < altura; i++)
+            {
+                tempMapa[i] = new int[largura];
+            }
+
+            // 1. CÓPIA DAS BORDAS (mantém a borda original)
+            // e aloca a matriz temporária
+            for (int y = 0; y < altura; y++)
+            {
+                for (int x = 0; x < largura; x++)
+                {
+                    // Copia o valor atual para o tempMapa
+                    tempMapa[y][x] = mapa[y][x];
+                }
+            }
+
+            // 2. Processamento e Média (ATUALIZA APENAS O INTERIOR)
+            for (int y = 1; y < altura - 1; y++)
+            {
+                for (int x = 1; x < largura - 1; x++)
+                {
+                    // Filtro de Média 3x3 (Box Blur)
+                    int soma = 0;
+
+                    for (int dy = -1; dy <= 1; dy++)
+                    {
+                        for (int dx = -1; dx <= 1; dx++)
+                        {
+                            soma += tempMapa[y + dy][x + dx]; // Usa tempMapa[y][x] (valor original)
+                        }
+                    }
+                    // Atualiza o valor diretamente no mapa original
+                    mapa[y][x] = soma / 9; // Sempre divide por 9 (3x3)
+                }
+            }
+
+            // LIBERAÇÃO MANUAL do mapa temporário
+            for (int i = 0; i < altura; i++)
+            {
+                delete[] tempMapa[i];
+            }
+            delete[] tempMapa;
         }
     }
 
@@ -245,9 +296,17 @@ public:
             minimo = maximo;
             maximo = temp;
         }
-        int intervalo = (maximo - minimo) + 1;
+
         int valor = gerarNumero();
-        return minimo + (valor % intervalo);
+        double t = static_cast<double>(valor) / 0x7FFFFFFF;
+        int novoValor = minimo + static_cast<int>(t * (maximo - minimo + 1));
+
+        if (novoValor > maximo)
+        {
+            novoValor = maximo;
+        }
+
+        return novoValor;
     }
 
     void gerarMapa()
@@ -276,6 +335,7 @@ public:
         }
 
         diamondSquare(largura, distInicial);
+        suavizarMapa(2);
 
         for (int linha = 0; linha < altura; linha++)
         {
