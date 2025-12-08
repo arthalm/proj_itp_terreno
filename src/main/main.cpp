@@ -5,11 +5,11 @@
 int main(){
 
     std::cout << std::endl;
-    std::cout << "========================================\n";
-    std::cout << "          GERADOR DE MAPAS\n";
-    std::cout << "========================================\n\n";
-
+    std::cout << "========================================" << std::endl;
+    std::cout << "          GERADOR DE MAPAS" << std::endl;
+    std::cout << "========================================" << std::endl;
     std::cout << std::endl;
+
     //paleta
     std::cout << "1. Nome do arquivo com a paleta (ex: arquivo.hex): ";
     std::string arquivoPaleta;
@@ -63,13 +63,14 @@ int main(){
     imagem.salvarPPM(arquivoSaida);
 
     int tamanho = terreno.obterAltura();
-    std::cout << "\n"<< std::string(40, '=') << std::endl;
-    std::cout << "CONFIGURACAO:\n";
-    std::cout << "  Tamanho: " << tamanho << "x" << tamanho << "\n";
-    std::cout << "  Semente: " << semente << "\n";
-    std::cout << "  Altitude: [" << minimo << ", " << maximo << "]\n";
-    std::cout << "  Fator sombra: " << fator << "\n";
-    std::cout << std::string(40, '=') << std::endl;
+    std::cout << std::endl;
+    std::cout << "========================================" << std::endl;
+    std::cout << "CONFIGURACAO:" << std::endl;
+    std::cout << "  Tamanho: " << tamanho << "x" << tamanho << std::endl;
+    std::cout << "  Semente: " << semente << std::endl;
+    std::cout << "  Altitude: [" << minimo << ", " << maximo << "]" << std::endl;
+    std::cout << "  Fator sombra: " << fator << std::endl;
+    std::cout << "========================================" << std::endl;
     std::cout << std::endl;
 
     return 0;
