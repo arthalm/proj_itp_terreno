@@ -1,13 +1,8 @@
-
 #ifndef PALETA_H
 #define PALETA_H
 
 #include <string>
-
-struct Cor
-{
-    unsigned char r, g, b; // unsigned char vao de 0 a 255
-};
+#include "../cor.h"
 
 class Paleta
 {
