@@ -1,5 +1,5 @@
-#ifndef PALETA_H
-#define PALETA_H
+#ifndef IMAGEM_H
+#define IMAGEM_H
 
 // includes necessários agora e nas próximas funções
 #include <string>
